@@ -2,6 +2,7 @@ package com.haulmont.testtask.DAO;
 
 import com.haulmont.testtask.DataSourceConfig;
 import com.haulmont.testtask.entities.Client;
+import com.haulmont.testtask.entities.Master;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -72,7 +73,7 @@ public class ClientDAO {
          return clientList;
     }
 
-    void updateClient(String id, String fName, String lName, String fatherName, String phone){
+     public void updateClient(Long id, String fName, String lName, String fatherName, String phone){
         String sql = "UPDATE client SET first_name = ?, last_name = ?, fatherName = ?, phone = ? WHERE id = ?";
         Connection con = DataSourceConfig.getInstance();
         try {
@@ -81,11 +82,36 @@ public class ClientDAO {
             ps.setString(2, lName);
             ps.setString(3, fatherName);
             ps.setString(4, phone);
-            ps.setLong(5, Long.parseLong(id));
+            ps.setLong(5,id);
             ps.execute();
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
+    }
+
+    public Client getClient(String id) {
+        String sql = "SELECT * FROM client WHERE id = ? ";
+        Long clientId = Long.parseLong(id);
+
+        Client client = new Client();
+
+        Connection con = DataSourceConfig.getInstance();
+        try {
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setLong(1, clientId);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()){
+                client.setId(rs.getLong("id"));
+                client.setFirstName(rs.getString("first_name"));
+                client.setLastName(rs.getString("last_name"));
+                client.setFatherName(rs.getString("father_name"));
+                client.setPhone(rs.getString("salary"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return client;
     }
 }

@@ -20,28 +20,21 @@ public class OrderDAO {
 
     private DateFormat format = new SimpleDateFormat("MMMM d, yyyy", Locale.ENGLISH);
 
-    public void addOrder(String client, String master, String createDate,
-                         String finishDate, Double price, Status status) {
+    public void addOrder(String client, String master, Date createDate,
+                         Date finishDate, String price) {
 
         String sql = "INSERT INTO orders (client, master, create_date, finish_date," +
                 " price, status) VALUES (?, ?, ?, ?, ?, ?) ";
         Connection con = DataSourceConfig.getInstance();
-        Date crDate = null;
-        Date fshDate = null;
-        try {
-            crDate = format.parse(createDate);
-            fshDate = format.parse(finishDate);
-        } catch ( ParseException e){
-            e.printStackTrace();
-        }
+
         try {
             PreparedStatement ps = con.prepareStatement(sql);
             ps.setLong(1, Long.parseLong(client));
             ps.setLong(2, Long.parseLong(master));
-            ps.setDate(3, (java.sql.Date) crDate);
-            ps.setDate(4, (java.sql.Date) fshDate);
-            ps.setDouble(5, price);
-            ps.setString(6, status.getDescription());
+            ps.setDate(3, (java.sql.Date) createDate);
+            ps.setDate(4, (java.sql.Date) finishDate);
+            ps.setDouble(5, Double.parseDouble(price));
+            ps.setString(6, Status.PLANNED.getDescription());
             ps.execute();
         } catch (SQLException e) {
             e.printStackTrace();

@@ -71,7 +71,7 @@ public class MasterDAO {
         return masterList;
     }
 
-    void updateMaster(String id, String fName, String lName, String fatherName, String salary){
+    public void updateMaster(Long id, String fName, String lName, String fatherName, String salary){
         String sql = "UPDATE master SET first_name = ?, last_name = ?, fatherName = ?, salary = ? WHERE id = ?";
         Connection con = DataSourceConfig.getInstance();
         try {
@@ -80,11 +80,36 @@ public class MasterDAO {
             ps.setString(2, lName);
             ps.setString(3, fatherName);
             ps.setLong(4, Long.parseLong(salary));
-            ps.setLong(5, Long.parseLong(id));
+            ps.setLong(5, id);
             ps.execute();
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
+    }
+
+    public Master getMaster(String id) {
+        String sql = "SELECT * FROM master WHERE id = ? ";
+        Long masterId = Long.parseLong(id);
+
+        Master master = new Master();
+
+        Connection con = DataSourceConfig.getInstance();
+        try {
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setLong(1, masterId);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()){
+                master.setId(rs.getLong("id"));
+                master.setFirstName(rs.getString("first_name"));
+                master.setLastName(rs.getString("last_name"));
+                master.setFatherName(rs.getString("father_name"));
+                master.setSalary(rs.getLong("salary"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return master;
     }
 }

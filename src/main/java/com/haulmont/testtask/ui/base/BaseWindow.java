@@ -10,9 +10,9 @@ import com.vaadin.ui.Window;
 public class BaseWindow extends Window {
 
     // обновить клиента
-    public BaseWindow(String caption, ClientDAO dao) {
-        getWindow(caption, "200px", "1000px", new );
-    }
+//    public BaseWindow(String caption, ClientDAO dao) {
+//        getWindow(caption, "200px", "1000px", new );
+//    }
 
     private void getWindow(String caption, String height,
                            String width, ChangeInterface changeInterface){

@@ -1,6 +1,8 @@
 package com.haulmont.testtask.ui.changes;
 
+import com.haulmont.testtask.DAO.ClientDAO;
 import com.haulmont.testtask.DAO.MasterDAO;
+import com.haulmont.testtask.entities.Client;
 import com.haulmont.testtask.entities.Master;
 import com.haulmont.testtask.ui.base.BaseWindow;
 import com.vaadin.data.validator.RegexpValidator;
@@ -8,12 +10,12 @@ import com.vaadin.ui.*;
 
 import static com.haulmont.testtask.ui.util.Utility.*;
 
-public class ChangeMasterPart extends VerticalLayout implements ChangeInterface{
+public class ChangeClientPart extends VerticalLayout implements ChangeInterface {
     RegexpValidator numberValidator = new RegexpValidator("^[0-9]{1,4}$", "Wrong input");
     RegexpValidator stringValidator = new RegexpValidator("^[А-ЯЁа-яёA-Za-z]{1,20}$", "Wrong input");
 
-    // добавить мастера
-    public ChangeMasterPart(MasterDAO masterDAO, BaseWindow baseWindow){
+    // добавить клиента
+    public ChangeClientPart(ClientDAO clientDAO, BaseWindow baseWindow){
         GridLayout gridLayout = new GridLayout(4,4);
         gridLayout.setSpacing(true);
         gridLayout.setSizeFull();
@@ -21,44 +23,44 @@ public class ChangeMasterPart extends VerticalLayout implements ChangeInterface{
         TextField nameField = new TextField("Имя");
         TextField surnameField = new TextField("Фамилия");
         TextField fNameField = new TextField("Отчество");
-        TextField salaryField = new TextField("Часовая ставка");
+        TextField phoneField = new TextField("Номер телефона");
 
 
         nameField.addValidator(stringValidator);
         surnameField.addValidator(stringValidator);
         fNameField.addValidator(stringValidator);
-        salaryField.addValidator(numberValidator);
+        phoneField.addValidator(numberValidator);
 
         Button addButton = new Button("Добавить");
         addButton.addClickListener((Button.ClickListener) clickEvent -> {
             if (checkValidate(nameField.isValid(), surnameField.isValid(),
-                    fNameField.isValid(), salaryField.isValid())){
-                masterDAO.addMaster(nameField.getValue(),surnameField.getValue(), fNameField.getValue(),Long.parseLong(salaryField.getValue()));
+                    fNameField.isValid(), phoneField.isValid())){
+                clientDAO.addClient(nameField.getValue(),surnameField.getValue(), fNameField.getValue(),phoneField.getValue());
 
-                clearFields(nameField,surnameField,fNameField, salaryField);
+                clearFields(nameField,surnameField,fNameField, phoneField);
 
                 // TODO новый слой UI.getCurrent().setContent(new );
-                }
+            }
         });
 
         Button closeButton = cancelButton(baseWindow);
 
-        addGridComponents(nameField, surnameField, fNameField, salaryField,
+        addGridComponents(nameField, surnameField, fNameField, phoneField,
                 addButton, closeButton, gridLayout);
 
         addComponent(gridLayout);
     }
 
     // delete master
-    public ChangeMasterPart(MasterDAO masterDAO, String id, BaseWindow baseWindow){
-        Master master = masterDAO.getMaster(id);
+    public ChangeClientPart(ClientDAO clientDAO, String id, BaseWindow baseWindow){
+        Client client = clientDAO.getClient(id);
         StringBuilder builder = new StringBuilder("Будет удален ");
-        builder.append(master.getLastName()).append(" ").append(master.getFirstName()).append(" ").append(master.getFatherName()).append("\n Продолжить?");
+        builder.append(client.getLastName()).append(" ").append(client.getFirstName()).append(" ").append(client.getFatherName()).append("\n Продолжить?");
         Label label = new Label(builder.toString());
 
         Button deleteButton = new Button("Удалить");
         deleteButton.addClickListener((Button.ClickListener) clickEvent -> {
-            masterDAO.delMaster(id);
+            clientDAO.delClient(id);
             // TODO новый слой UI.getCurrent().setContent(new );
         });
 
@@ -70,7 +72,7 @@ public class ChangeMasterPart extends VerticalLayout implements ChangeInterface{
     }
 
     // update master
-    public ChangeMasterPart(MasterDAO masterDAO, BaseWindow window, Master master){
+    public ChangeClientPart(ClientDAO clientDAO, BaseWindow window, Client client){
         GridLayout gridLayout = new GridLayout(4,4);
         gridLayout.setSpacing(true);
         gridLayout.setSizeFull();
@@ -78,25 +80,24 @@ public class ChangeMasterPart extends VerticalLayout implements ChangeInterface{
         TextField nameField = new TextField("Имя");
         TextField surnameField = new TextField("Фамилия");
         TextField fNameField = new TextField("Отчество");
-        TextField salaryField = new TextField("Часовая ставка");
+        TextField phoneField = new TextField("Часовая ставка");
 
         nameField.addValidator(stringValidator);
         surnameField.addValidator(stringValidator);
         fNameField.addValidator(stringValidator);
-        salaryField.addValidator(numberValidator);
+        phoneField.addValidator(numberValidator);
 
-        nameField.setValue(master.getFirstName());
-        surnameField.setValue(master.getLastName());
-        fNameField.setValue(master.getFatherName());
-        salaryField.setValue(master.getSalary().toString());
+        nameField.setValue(client.getFirstName());
+        surnameField.setValue(client.getLastName());
+        fNameField.setValue(client.getPhone());
 
         Button updateButton = new Button("Сохранить изменения");
         updateButton.addClickListener((Button.ClickListener) clickEvent -> {
             if (checkValidate(nameField.isValid(), surnameField.isValid(),
-                    fNameField.isValid(), salaryField.isValid())){
-                masterDAO.updateMaster(master.getId(), nameField.getValue(),
-                        surnameField.getValue(),fNameField.getValue(), salaryField.getValue());
-                clearFields(nameField,surnameField,fNameField, salaryField);
+                    fNameField.isValid(), phoneField.isValid())){
+                clientDAO.updateClient(client.getId(), nameField.getValue(),
+                        surnameField.getValue(),fNameField.getValue(), phoneField.getValue());
+                clearFields(nameField,surnameField,fNameField, phoneField);
                 // TODO новый слой UI.getCurrent().setContent(new );
 
             }
@@ -104,14 +105,12 @@ public class ChangeMasterPart extends VerticalLayout implements ChangeInterface{
 
         Button closeButton = cancelButton(window);
 
-        addGridComponents(nameField, surnameField, fNameField, salaryField,
-                            updateButton, closeButton, gridLayout);
+        addGridComponents(nameField, surnameField, fNameField, phoneField,
+                updateButton, closeButton, gridLayout);
 
         addComponent(gridLayout);
 
     }
-
-
 
 
 }

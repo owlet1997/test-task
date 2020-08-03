@@ -12,7 +12,7 @@ public class DataSourceConfig {
         if (instance == null) {
             try {
                 Class.forName("org.hsqldb.jdbcDriver");
-                instance = DriverManager.getConnection("jdbc:hsqldb:file:/home/owlet/db", "sa", "");
+                instance = DriverManager.getConnection("jdbc:hsqldb:file:db", "sa", "");
             } catch (SQLException e) {
                 e.printStackTrace();
             } catch (ClassNotFoundException e) {
