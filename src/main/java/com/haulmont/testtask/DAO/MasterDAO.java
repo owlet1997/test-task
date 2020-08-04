@@ -2,6 +2,7 @@ package com.haulmont.testtask.DAO;
 
 import com.haulmont.testtask.DataSourceConfig;
 import com.haulmont.testtask.entities.Master;
+import com.haulmont.testtask.exception.WrongDeleteException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -29,7 +30,7 @@ public class MasterDAO {
         }
     }
 
-    public void delMaster(String number){
+    public void delMaster(String number) throws WrongDeleteException{
         String sql = "DELETE  FROM master WHERE id = ? ";
         Connection con = DataSourceConfig.getInstance();
         try {
@@ -39,6 +40,8 @@ public class MasterDAO {
 
         } catch (SQLException e) {
             e.printStackTrace();
+            throw new WrongDeleteException("Нельзя удалить данного мастера!");
+
         }
     }
 
@@ -88,7 +91,7 @@ public class MasterDAO {
 
     }
 
-    public Master getMaster(String id) {
+    public Master getMaster(String id)  {
         String sql = "SELECT * FROM master WHERE id = ? ";
         Long masterId = Long.parseLong(id);
 
@@ -109,7 +112,7 @@ public class MasterDAO {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        }
+                }
         return master;
     }
 }

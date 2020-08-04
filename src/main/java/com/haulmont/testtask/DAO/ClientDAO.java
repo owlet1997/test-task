@@ -3,6 +3,7 @@ package com.haulmont.testtask.DAO;
 import com.haulmont.testtask.DataSourceConfig;
 import com.haulmont.testtask.entities.Client;
 import com.haulmont.testtask.entities.Master;
+import com.haulmont.testtask.exception.WrongDeleteException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -31,7 +32,7 @@ public class ClientDAO {
         }
     }
 
-    public void delClient(String number){
+    public void delClient(String number) throws WrongDeleteException {
         String sql = "DELETE  FROM client WHERE id = ? ";
         Connection con = DataSourceConfig.getInstance();
         try {
@@ -41,6 +42,7 @@ public class ClientDAO {
 
         } catch (SQLException e) {
             e.printStackTrace();
+            throw new WrongDeleteException("Нельзя удалить этого клиента!");
         }
     }
 

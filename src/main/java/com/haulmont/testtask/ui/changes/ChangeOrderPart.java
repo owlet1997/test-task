@@ -5,11 +5,15 @@ import com.haulmont.testtask.DAO.MasterDAO;
 import com.haulmont.testtask.DAO.OrderDAO;
 import com.haulmont.testtask.entities.Client;
 import com.haulmont.testtask.entities.Master;
+import com.haulmont.testtask.entities.Order;
+import com.haulmont.testtask.exception.WrongDeleteException;
 import com.haulmont.testtask.ui.base.BaseWindow;
 import com.vaadin.data.validator.RegexpValidator;
 import com.vaadin.ui.*;
+import org.jsoup.Connection;
 import sun.awt.X11.XBaseWindow;
 
+import java.sql.SQLException;
 import java.util.List;
 
 import static com.haulmont.testtask.ui.util.Utility.checkValidate;
@@ -53,15 +57,47 @@ public class ChangeOrderPart extends VerticalLayout implements ChangeInterface {
                 // TODO новый слой UI.getCurrent().setContent(new );
 
             }
-            Button cancelButton = cancelButton(window);
 
-
-            addComponent(gridLayout);
         });
+        Button cancelButton = cancelButton(window);
+        gridLayout.addComponent(descrField, 0, 0);
+        gridLayout.addComponent(selectClient, 1, 0);
+        gridLayout.addComponent(selectMaster, 2, 0);
+        gridLayout.addComponent(createField, 3, 0);
+        gridLayout.addComponent(finishField, 4, 0);
+        gridLayout.addComponent(priceField, 5, 0);
 
+        gridLayout.addComponent(addButton, 3, 1);
+        gridLayout.addComponent(cancelButton, 4, 1);
 
+        addComponent(gridLayout);
+    }
 
+    //delete order
+    public ChangeOrderPart(OrderDAO orderDAO, String id, BaseWindow window){
+        Order order = orderDAO.getOrder(id);
+        StringBuilder builder = new StringBuilder("Будет удален заказ №");
+        builder.append(order.getId()).append(" от ").append(order.getCreateDate()).append(" ").append("\n Продолжить?");
+        Label label = new Label(builder.toString());
 
+        Button deleteButton = new Button("Удалить");
+        deleteButton.addClickListener((Button.ClickListener) clickEvent -> {
+            try{
+                orderDAO.delOrder(id);
+            } catch (WrongDeleteException e){
+                Notification.show("Ошибка удаления",
+                        "Нельзя удалить заказ с этим номером!",
+                        Notification.TYPE_HUMANIZED_MESSAGE);
+                window.close();
+            }
+
+            // TODO новый слой UI.getCurrent().setContent(new );
+        });
+        Button closeButton = cancelButton(window);
+
+        addComponent(label);
+        addComponent(deleteButton);
+        addComponent(closeButton);
 
     }
 

@@ -2,6 +2,7 @@ package com.haulmont.testtask.ui.changes;
 
 import com.haulmont.testtask.DAO.MasterDAO;
 import com.haulmont.testtask.entities.Master;
+import com.haulmont.testtask.exception.WrongDeleteException;
 import com.haulmont.testtask.ui.base.BaseWindow;
 import com.vaadin.data.validator.RegexpValidator;
 import com.vaadin.ui.*;
@@ -58,7 +59,15 @@ public class ChangeMasterPart extends VerticalLayout implements ChangeInterface{
 
         Button deleteButton = new Button("Удалить");
         deleteButton.addClickListener((Button.ClickListener) clickEvent -> {
-            masterDAO.delMaster(id);
+            try {
+                masterDAO.delMaster(id);
+            } catch (WrongDeleteException e) {
+                e.printStackTrace();
+                Notification.show("Ошибка удаления",
+                        "Нельзя удалить заказ с этим номером!",
+                        Notification.TYPE_HUMANIZED_MESSAGE);
+                baseWindow.close();
+            }
             // TODO новый слой UI.getCurrent().setContent(new );
         });
 

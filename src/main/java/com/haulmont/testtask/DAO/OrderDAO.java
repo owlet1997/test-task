@@ -3,6 +3,7 @@ package com.haulmont.testtask.DAO;
 import com.haulmont.testtask.DataSourceConfig;
 import com.haulmont.testtask.entities.Order;
 import com.haulmont.testtask.enums.Status;
+import com.haulmont.testtask.exception.WrongDeleteException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -41,7 +42,7 @@ public class OrderDAO {
         }
     }
 
-    public void delOrder(String number){
+    public void delOrder(String number) throws WrongDeleteException {
         String sql = "DELETE  FROM orders WHERE id = ? ";
         Connection con = DataSourceConfig.getInstance();
         try {
@@ -51,6 +52,7 @@ public class OrderDAO {
 
         } catch (SQLException e) {
             e.printStackTrace();
+            throw new WrongDeleteException("Нельзя удалить заказ!");
         }
     }
 
@@ -105,5 +107,29 @@ public class OrderDAO {
             e.printStackTrace();
         }
 
+    }
+
+    public Order getOrder(String id) {
+        String sql = "SELECT * FROM orders WHERE id = ?";
+        Connection con = DataSourceConfig.getInstance();
+        Order order = new Order();
+        try{
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setLong(1, Long.parseLong(id));
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()){
+                order.setId(rs.getLong("id"));
+                order.setClient(rs.getLong("client"));
+                order.setMaster(rs.getLong("master"));
+                order.setCreateDate(rs.getDate("create_date"));
+                order.setFinishDate(rs.getDate("finish_date"));
+                order.setPrice(rs.getDouble("price"));
+                order.setStatus(Status.valueOf(rs.getString("status")));
+            }
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+        return order;
     }
 }
