@@ -35,7 +35,23 @@ public class Utility {
         gridLayout.addComponent(tf4, 3, 0);
 
         gridLayout.addComponent(tf5, 2, 1);
-        gridLayout.addComponent(tf6, 3, 0);
+        gridLayout.addComponent(tf6, 3, 1);
+
+    }
+
+    public static void addGridComponents(Component tf1, Component tf2,
+                                         Component tf3, Component tf4,
+                                         Component tf5, Component tf6,
+                                         Component tf7, GridLayout gridLayout){
+
+        gridLayout.addComponent(tf1, 0,0);
+        gridLayout.addComponent(tf2,1, 0);
+        gridLayout.addComponent(tf3, 2, 0);
+        gridLayout.addComponent(tf4, 3, 0);
+        gridLayout.addComponent(tf5, 4, 0);
+
+        gridLayout.addComponent(tf6, 2, 1);
+        gridLayout.addComponent(tf7, 3, 1);
 
     }
 

@@ -6,18 +6,16 @@ import com.haulmont.testtask.DAO.OrderDAO;
 import com.haulmont.testtask.entities.Client;
 import com.haulmont.testtask.entities.Master;
 import com.haulmont.testtask.entities.Order;
+import com.haulmont.testtask.enums.Status;
 import com.haulmont.testtask.exception.WrongDeleteException;
 import com.haulmont.testtask.ui.base.BaseWindow;
 import com.vaadin.data.validator.RegexpValidator;
 import com.vaadin.ui.*;
-import org.jsoup.Connection;
-import sun.awt.X11.XBaseWindow;
 
-import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.List;
 
-import static com.haulmont.testtask.ui.util.Utility.checkValidate;
-import static com.haulmont.testtask.ui.util.Utility.clearFields;
+import static com.haulmont.testtask.ui.util.Utility.*;
 
 public class ChangeOrderPart extends VerticalLayout implements ChangeInterface {
     RegexpValidator numberValidator = new RegexpValidator("^[0-9]{1,4}$", "Wrong input");
@@ -100,5 +98,55 @@ public class ChangeOrderPart extends VerticalLayout implements ChangeInterface {
         addComponent(closeButton);
 
     }
+    // update order
+    public ChangeOrderPart(OrderDAO orderDAO, MasterDAO masterDAO, String id, BaseWindow window){
+        GridLayout gridLayout = new GridLayout(4,4);
+        Order order = orderDAO.getOrder(id);
+
+        gridLayout.setSpacing(true);
+        gridLayout.setSizeFull();
+
+        TextField descrField = new TextField("Описание");
+        TextField priceField = new TextField("Цена");
+        DateField finishField = new DateField("Дата сдачи");
+        ComboBox selectMaster = new ComboBox("Исполнитель");
+        ComboBox selectStatus = new ComboBox("Статус");
+
+        List<Master> masterList = masterDAO.getMasterList("","");
+        List<Status> statusList = Arrays.asList(Status.values());
+
+        masterList.forEach(e->selectMaster.addItem(e.getId()));
+        statusList.forEach(e->selectStatus.addItem(e.getDescription()));
+
+        descrField.setValue(order.getDescription());
+        priceField.setValue(order.getPrice().toString());
+        finishField.setValue(order.getFinishDate());
+        selectMaster.setValue(order.getMaster());
+        selectStatus.setValue(order.getStatus().getDescription());
+
+        priceField.addValidator(numberValidator);
+
+        Button updateButton = new Button("Сохранить изменения");
+        updateButton.addClickListener((Button.ClickListener) clickEvent -> {
+            if (checkValidate(descrField.isValid(), priceField.isValid(),
+                    finishField.isValid(), selectMaster.isValid(), selectStatus.isValid())){
+                orderDAO.updateOrder(order.getId(), descrField.getValue(),
+                        priceField.getValue(),finishField.getValue(), (Long) selectMaster.getValue(), (String) selectStatus.getValue());
+               Notification.show("Успешно!", "Заказ был успешно обновлен!", Notification.Type.HUMANIZED_MESSAGE);
+                // TODO новый слой UI.getCurrent().setContent(new );
+
+            }
+        });
+
+        Button closeButton = cancelButton(window);
+
+        addGridComponents(descrField,priceField, finishField,selectMaster,selectStatus,
+                updateButton, closeButton, gridLayout);
+
+        addComponent(gridLayout);
+
+    }
+
+
 
 }

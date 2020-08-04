@@ -132,4 +132,23 @@ public class OrderDAO {
         }
         return order;
     }
+
+    public void updateOrder(Long id, String description, String price, Date finishDate, Long masterId, String status){
+        String sql = "UPDATE orders set description = ?, price = ?, finish_date = ?, master = ?, status = ? WHERE id = ?";
+        Connection con = DataSourceConfig.getInstance();
+        try{
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setString(1, description);
+            ps.setDouble(2, Double.parseDouble(price));
+            ps.setDate(3, (java.sql.Date) finishDate);
+            ps.setLong(4,masterId);
+            ps.setString(5, status);
+            ps.setLong(6, id);
+
+            ps.execute();
+
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
 }

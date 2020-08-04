@@ -14,6 +14,15 @@ import java.util.List;
 
 public class ClientDAO {
 
+    private static ClientDAO clientDAO;
+
+    public static ClientDAO getInstance(){
+        if (clientDAO == null) {
+            clientDAO = new ClientDAO();
+        }
+        return clientDAO;
+    }
+
     public void addClient(String fName, String lName, String fatherName, String phone) {
 
         String sql = "INSERT INTO client (first_name, last_name, father_name, phone) VALUES (?, ?, ?, ?) ";
