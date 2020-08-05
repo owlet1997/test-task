@@ -1,9 +1,8 @@
-package com.haulmont.testtask.DAO;
+package com.haulmont.testtask.data.DAO;
 
 import com.haulmont.testtask.DataSourceConfig;
-import com.haulmont.testtask.entities.Client;
-import com.haulmont.testtask.entities.Master;
-import com.haulmont.testtask.exception.WrongDeleteException;
+import com.haulmont.testtask.data.entities.Client;
+import com.haulmont.testtask.data.exception.WrongDeleteException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

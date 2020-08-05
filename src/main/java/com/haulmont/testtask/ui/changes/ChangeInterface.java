@@ -1,6 +1,6 @@
 package com.haulmont.testtask.ui.changes;
 
-import com.haulmont.testtask.ui.base.BaseWindow;
+import com.haulmont.testtask.ui.window.BaseWindow;
 import com.vaadin.ui.Button;
 
 public interface ChangeInterface {

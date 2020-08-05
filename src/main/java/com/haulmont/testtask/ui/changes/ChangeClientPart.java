@@ -1,11 +1,9 @@
 package com.haulmont.testtask.ui.changes;
 
-import com.haulmont.testtask.DAO.ClientDAO;
-import com.haulmont.testtask.DAO.MasterDAO;
-import com.haulmont.testtask.entities.Client;
-import com.haulmont.testtask.entities.Master;
-import com.haulmont.testtask.exception.WrongDeleteException;
-import com.haulmont.testtask.ui.base.BaseWindow;
+import com.haulmont.testtask.data.DAO.ClientDAO;
+import com.haulmont.testtask.data.entities.Client;
+import com.haulmont.testtask.data.exception.WrongDeleteException;
+import com.haulmont.testtask.ui.window.BaseWindow;
 import com.vaadin.data.validator.RegexpValidator;
 import com.vaadin.ui.*;
 
@@ -52,7 +50,7 @@ public class ChangeClientPart extends VerticalLayout implements ChangeInterface 
         addComponent(gridLayout);
     }
 
-    // delete master
+    // delete client
     public ChangeClientPart(ClientDAO clientDAO, String id, BaseWindow baseWindow){
         Client client = clientDAO.getClient(id);
         StringBuilder builder = new StringBuilder("Будет удален ");
@@ -80,7 +78,7 @@ public class ChangeClientPart extends VerticalLayout implements ChangeInterface 
         addComponent(closeButton);
     }
 
-    // update master
+    // update client
     public ChangeClientPart(ClientDAO clientDAO, BaseWindow window, Client client){
         GridLayout gridLayout = new GridLayout(4,4);
         gridLayout.setSpacing(true);
@@ -89,7 +87,7 @@ public class ChangeClientPart extends VerticalLayout implements ChangeInterface 
         TextField nameField = new TextField("Имя");
         TextField surnameField = new TextField("Фамилия");
         TextField fNameField = new TextField("Отчество");
-        TextField phoneField = new TextField("Часовая ставка");
+        TextField phoneField = new TextField("Телефон");
 
         nameField.addValidator(stringValidator);
         surnameField.addValidator(stringValidator);

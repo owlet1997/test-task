@@ -1,4 +1,4 @@
-package com.haulmont.testtask.entities;
+package com.haulmont.testtask.data.entities;
 
 public class Master {
     private Long id;

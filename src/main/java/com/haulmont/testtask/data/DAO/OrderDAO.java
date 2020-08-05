@@ -1,9 +1,10 @@
-package com.haulmont.testtask.DAO;
+package com.haulmont.testtask.data.DAO;
 
 import com.haulmont.testtask.DataSourceConfig;
-import com.haulmont.testtask.entities.Order;
-import com.haulmont.testtask.enums.Status;
-import com.haulmont.testtask.exception.WrongDeleteException;
+import com.haulmont.testtask.data.DTO.OrderDTO;
+import com.haulmont.testtask.data.entities.Order;
+import com.haulmont.testtask.data.enums.Status;
+import com.haulmont.testtask.data.exception.WrongDeleteException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -78,6 +79,45 @@ public class OrderDAO {
                 order.setFinishDate((java.sql.Date) rs.getDate("finish_date"));
                 order.setPrice(rs.getDouble("price"));
                 order.setStatus(Status.valueOf(rs.getString("status")));
+                orderList.add(order);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return orderList;
+    }
+
+    public List<OrderDTO> getOrderDTOList(String client, String master){
+        String sql = "SELECT * FROM orders WHERE client = ? AND master = ?";
+        String sqlClientSurname = "SELECT last_name FROM client WHERE id = ?";
+        String sqlMasterSurname = "SELECT last_name FROM master WHERE id = ?";
+        List<OrderDTO> orderList = new ArrayList<>();
+        Connection con = DataSourceConfig.getInstance();
+        try {
+            if (client==null) client = "";
+            if (master==null) master = "";
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setLong(1, Long.parseLong(client));
+            ps.setLong(2, Long.parseLong(client));
+
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()){
+                OrderDTO order = new OrderDTO();
+                order.setId(rs.getLong("id"));
+                PreparedStatement psClient = con.prepareStatement(sqlClientSurname);
+                PreparedStatement psMaster = con.prepareStatement(sqlMasterSurname);
+                psClient.setLong(1,rs.getLong("client"));
+                psMaster.setLong(1,rs.getLong("master"));
+                ResultSet rsClient = psClient.executeQuery();
+                ResultSet rsMaster = psMaster.executeQuery();
+                order.setClientSurname(rsClient.getString("last_name"));
+                order.setMasterSurname(rsMaster.getString("last_name"));
+                order.setCreateDate(rs.getDate("create_date").toString());
+                order.setFinishDate(rs.getDate("finish_date").toString());
+                order.setPrice(rs.getDouble("price"));
+                order.setStatus(rs.getString("status"));
                 orderList.add(order);
             }
 

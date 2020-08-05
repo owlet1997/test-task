@@ -1,7 +1,5 @@
 package com.haulmont.testtask;
 
-import com.haulmont.testtask.entities.Test;
-import com.haulmont.testtask.services.SampleHsqldb;
 import com.vaadin.annotations.Theme;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.ui.*;
@@ -15,7 +13,6 @@ public class MainUI extends UI {
         VerticalLayout layout = new VerticalLayout();
         layout.setSizeFull();
         layout.setMargin(true);
-//        SampleHsqldb sampleHsqldb = new SampleHsqldb();
 
         layout.addComponent(new Label("Main UI"));
 

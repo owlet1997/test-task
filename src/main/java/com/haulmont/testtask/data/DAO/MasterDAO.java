@@ -1,8 +1,9 @@
-package com.haulmont.testtask.DAO;
+package com.haulmont.testtask.data.DAO;
 
+import com.haulmont.testtask.data.DTO.StatisticsDTO;
 import com.haulmont.testtask.DataSourceConfig;
-import com.haulmont.testtask.entities.Master;
-import com.haulmont.testtask.exception.WrongDeleteException;
+import com.haulmont.testtask.data.entities.Master;
+import com.haulmont.testtask.data.exception.WrongDeleteException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -114,5 +115,30 @@ public class MasterDAO {
             e.printStackTrace();
                 }
         return master;
+    }
+
+    public List<StatisticsDTO> getStatistics(){
+        String sql = "SELECT first_name, last_name, father_name, count(o.master) as amount FROM master m " +
+                "INNER JOIN orders o on (m.id=o.master) group by o.master";
+
+        Connection con = DataSourceConfig.getInstance();
+
+        List<StatisticsDTO> list = new ArrayList<>();
+        try {
+            PreparedStatement ps = con.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()){
+                StatisticsDTO statisticsDTO = new StatisticsDTO();
+                statisticsDTO.setName(rs.getString("first_name"));
+                statisticsDTO.setLastName(rs.getString("last_name"));
+                statisticsDTO.setFatherName(rs.getString("father_name"));
+                statisticsDTO.setCountAll(rs.getInt("amount"));
+                list.add(statisticsDTO);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
     }
 }

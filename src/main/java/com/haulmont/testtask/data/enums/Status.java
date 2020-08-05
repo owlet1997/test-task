@@ -1,4 +1,4 @@
-package com.haulmont.testtask.enums;
+package com.haulmont.testtask.data.enums;
 
 public enum Status {
     PLANNED("Запланирован"),

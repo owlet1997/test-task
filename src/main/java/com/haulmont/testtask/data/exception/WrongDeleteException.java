@@ -1,4 +1,4 @@
-package com.haulmont.testtask.exception;
+package com.haulmont.testtask.data.exception;
 
 public class WrongDeleteException extends Exception{
 

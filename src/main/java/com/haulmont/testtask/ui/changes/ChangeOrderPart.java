@@ -1,14 +1,14 @@
 package com.haulmont.testtask.ui.changes;
 
-import com.haulmont.testtask.DAO.ClientDAO;
-import com.haulmont.testtask.DAO.MasterDAO;
-import com.haulmont.testtask.DAO.OrderDAO;
-import com.haulmont.testtask.entities.Client;
-import com.haulmont.testtask.entities.Master;
-import com.haulmont.testtask.entities.Order;
-import com.haulmont.testtask.enums.Status;
-import com.haulmont.testtask.exception.WrongDeleteException;
-import com.haulmont.testtask.ui.base.BaseWindow;
+import com.haulmont.testtask.data.DAO.ClientDAO;
+import com.haulmont.testtask.data.DAO.MasterDAO;
+import com.haulmont.testtask.data.DAO.OrderDAO;
+import com.haulmont.testtask.data.entities.Client;
+import com.haulmont.testtask.data.entities.Master;
+import com.haulmont.testtask.data.entities.Order;
+import com.haulmont.testtask.data.enums.Status;
+import com.haulmont.testtask.data.exception.WrongDeleteException;
+import com.haulmont.testtask.ui.window.BaseWindow;
 import com.vaadin.data.validator.RegexpValidator;
 import com.vaadin.ui.*;
 

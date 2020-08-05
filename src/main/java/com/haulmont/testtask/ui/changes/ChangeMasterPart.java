@@ -1,11 +1,15 @@
 package com.haulmont.testtask.ui.changes;
 
-import com.haulmont.testtask.DAO.MasterDAO;
-import com.haulmont.testtask.entities.Master;
-import com.haulmont.testtask.exception.WrongDeleteException;
-import com.haulmont.testtask.ui.base.BaseWindow;
+import com.haulmont.testtask.data.DAO.MasterDAO;
+import com.haulmont.testtask.data.DTO.StatisticsDTO;
+import com.haulmont.testtask.data.entities.Master;
+import com.haulmont.testtask.data.enums.Status;
+import com.haulmont.testtask.data.exception.WrongDeleteException;
+import com.haulmont.testtask.ui.window.BaseWindow;
 import com.vaadin.data.validator.RegexpValidator;
 import com.vaadin.ui.*;
+
+import java.util.List;
 
 import static com.haulmont.testtask.ui.util.Utility.*;
 
@@ -119,6 +123,32 @@ public class ChangeMasterPart extends VerticalLayout implements ChangeInterface{
         addComponent(gridLayout);
 
     }
+
+    // get statistics
+    public ChangeMasterPart(MasterDAO masterDAO, BaseWindow window, Status status){
+        GridLayout gridLayout = new GridLayout(4,4);
+        gridLayout.setSpacing(true);
+        gridLayout.setSizeFull();
+
+        Grid statisticList = new Grid();
+        statisticList.addColumn("Фамилия");
+        statisticList.addColumn("Имя");
+        statisticList.addColumn("Отчество");
+        statisticList.addColumn("Количество заказов");
+
+        List<StatisticsDTO> list = masterDAO.getStatistics();
+
+        list.forEach(e -> statisticList.addRow(e.getLastName(), e.getName(), e.getFatherName(), e.getCountAll()));
+
+        Button closeButton = cancelButton(window);
+
+        gridLayout.addComponent(statisticList);
+        gridLayout.addComponent(closeButton);
+        addComponent(gridLayout);
+    }
+
+
+
 
 
 

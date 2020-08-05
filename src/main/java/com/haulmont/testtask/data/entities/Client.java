@@ -1,4 +1,4 @@
-package com.haulmont.testtask.entities;
+package com.haulmont.testtask.data.entities;
 
 import java.io.Serializable;
 

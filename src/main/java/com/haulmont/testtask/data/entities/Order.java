@@ -1,6 +1,6 @@
-package com.haulmont.testtask.entities;
+package com.haulmont.testtask.data.entities;
 
-import com.haulmont.testtask.enums.Status;
+import com.haulmont.testtask.data.enums.Status;
 
 import java.util.Date;
 
