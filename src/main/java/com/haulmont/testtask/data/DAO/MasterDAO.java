@@ -46,17 +46,12 @@ public class MasterDAO {
         }
     }
 
-    public List<Master> getMasterList(String fName, String lName){
-        String sql = "SELECT * FROM master WHERE first_name = ? AND last_name = ?";
+    public List<Master> getMasterList(){
+        String sql = "SELECT * FROM master";
         List<Master> masterList = new ArrayList<>();
         Connection con = DataSourceConfig.getInstance();
         try {
-            if (fName==null) fName = "";
-            if (lName==null) lName = "";
             PreparedStatement ps = con.prepareStatement(sql);
-            ps.setString(1, fName);
-            ps.setString(2, lName);
-
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()){
@@ -118,8 +113,7 @@ public class MasterDAO {
     }
 
     public List<StatisticsDTO> getStatistics(){
-        String sql = "SELECT first_name, last_name, father_name, count(o.master) as amount FROM master m " +
-                "INNER JOIN orders o on (m.id=o.master) group by o.master";
+        String sql = "SELECT m.first_name, m.last_name, m.father_name, count(m.id) as amount FROM master m INNER JOIN orders o on (m.id=o.master) group by m.id";
 
         Connection con = DataSourceConfig.getInstance();
 

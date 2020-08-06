@@ -1,5 +1,6 @@
 package com.haulmont.testtask.ui.window;
 
+import com.haulmont.testtask.ui.changes.ChangeInterface;
 import com.vaadin.data.validator.RegexpValidator;
 import com.vaadin.ui.*;
 
@@ -28,7 +29,24 @@ public class GetNumberWindow extends Window {
         gridLayout.addComponent(label,0,0);
         gridLayout.addComponent(send, 0,1);
         window.setContent(gridLayout);
+        window.center();
+        window.setHeight("200px");
+        window.setWidth("200px");
+        window.setModal(true);
+        UI.getCurrent().addWindow(window);
         return result[0];
+
+    }
+
+    private void getWindow(String caption, String height,
+                           String width, ChangeInterface changeInterface){
+        setCaption(caption);
+        setContent((Component) changeInterface);
+        center();
+        setHeight(height);
+        setWidth(width);
+        setModal(true);
+        UI.getCurrent().addWindow(this);
 
     }
 }

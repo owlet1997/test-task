@@ -54,17 +54,12 @@ public class ClientDAO {
         }
     }
 
-    public List<Client> getClientList(String fName, String lName){
-        String sql = "SELECT * FROM client WHERE first_name = ? AND last_name = ?";
+    public List<Client> getClientList(){
+        String sql = "SELECT * FROM client";
         List<Client> clientList = new ArrayList<>();
         Connection con = DataSourceConfig.getInstance();
         try {
-            if (fName==null) fName = "";
-            if (lName==null) lName = "";
             PreparedStatement ps = con.prepareStatement(sql);
-            ps.setString(1, fName);
-            ps.setString(2, lName);
-
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()){

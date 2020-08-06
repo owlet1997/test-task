@@ -1,8 +1,6 @@
 package com.haulmont.testtask.data.entities;
 
-import com.haulmont.testtask.data.enums.Status;
-
-import java.util.Date;
+import java.sql.Date;
 
 public class Order {
     private Long id;
@@ -19,7 +17,7 @@ public class Order {
 
     private Double price;
 
-    private Status status;
+    private String status;
 
     public Long getId() {
         return id;
@@ -77,11 +75,11 @@ public class Order {
         this.price = price;
     }
 
-    public Status getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(Status status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 }

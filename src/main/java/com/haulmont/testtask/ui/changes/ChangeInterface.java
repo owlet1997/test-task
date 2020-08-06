@@ -5,7 +5,7 @@ import com.vaadin.ui.Button;
 
 public interface ChangeInterface {
 
-    default Button cancelButton(BaseWindow window){
+    static Button cancelButton(BaseWindow window){
         Button button = new Button("Отменить");
         button.addClickListener((Button.ClickListener) clickEvent -> {
             window.close();

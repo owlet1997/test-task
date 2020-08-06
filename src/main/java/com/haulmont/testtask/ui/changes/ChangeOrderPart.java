@@ -6,26 +6,32 @@ import com.haulmont.testtask.data.DAO.OrderDAO;
 import com.haulmont.testtask.data.entities.Client;
 import com.haulmont.testtask.data.entities.Master;
 import com.haulmont.testtask.data.entities.Order;
-import com.haulmont.testtask.data.enums.Status;
 import com.haulmont.testtask.data.exception.WrongDeleteException;
 import com.haulmont.testtask.ui.window.BaseWindow;
 import com.vaadin.data.validator.RegexpValidator;
 import com.vaadin.ui.*;
 
+import java.sql.Date;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import static com.haulmont.testtask.ui.util.Utility.*;
 
 public class ChangeOrderPart extends VerticalLayout implements ChangeInterface {
-    RegexpValidator numberValidator = new RegexpValidator("^[0-9]{1,4}$", "Wrong input");
-    RegexpValidator stringValidator = new RegexpValidator("^[А-ЯЁа-яёA-Za-z]{1,20}$", "Wrong input");
+    static RegexpValidator numberValidator = new RegexpValidator("^[0-9]{1,4}$", "Wrong input");
+    static RegexpValidator stringValidator = new RegexpValidator("^[А-ЯЁа-яёA-Za-z]{1,20}$", "Wrong input");
+
+    private final static String[] statuses = new String[]{"Запланирован", "Выполнен", "Принят клиентом"};
+
+
+    public ChangeOrderPart() {}
 
     // add order
-    public ChangeOrderPart(OrderDAO orderDAO, MasterDAO masterDAO, ClientDAO clientDAO, BaseWindow window){
-        GridLayout gridLayout = new GridLayout(7,4);
-        gridLayout.setSpacing(true);
-        gridLayout.setSizeFull();
+    public static ChangeOrderPart addOrder(OrderDAO orderDAO, MasterDAO masterDAO, ClientDAO clientDAO, BaseWindow window){
+        ChangeOrderPart changeOrderPart = new ChangeOrderPart();
+        HorizontalLayout panel = new HorizontalLayout();
+        panel.setCaption("Добавление заказа");
 
         TextField descrField = new TextField("Описание");
         TextField priceField = new TextField("Цена");
@@ -37,74 +43,80 @@ public class ChangeOrderPart extends VerticalLayout implements ChangeInterface {
 
         priceField.addValidator(numberValidator);
 
-        List<Client> clientList = clientDAO.getClientList("", "");
-        List<Master> masterList = masterDAO.getMasterList("","");
+        List<Client> clientList = clientDAO.getClientList();
+        List<Master> masterList = masterDAO.getMasterList();
 
-
-        clientList.forEach(e -> selectClient.addItem(e.getId()));
-        masterList.forEach(e -> selectMaster.addItem(e.getId()));
+        clientList.forEach(e -> selectClient.addItem(String.valueOf(e.getId())));
+        masterList.forEach(e -> selectMaster.addItem(String.valueOf(e.getId())));
 
         Button addButton = new Button("Добавить заказ");
         addButton.addClickListener((Button.ClickListener) clickEvent -> {
 
-            if (checkValidate(priceField.isValid(), selectClient.isValid(), selectMaster.isValid())){
+            if (checkValidate(priceField.isValid(), selectClient.isValid(), selectMaster.isValid(), descrField.isValid())){
                 orderDAO.addOrder((String) selectClient.getValue(), (String) selectMaster.getValue(),
-                        createField.getValue(), finishField.getValue(),priceField.getValue());
+                        new Date(createField.getValue().getTime()), new Date(finishField.getValue().getTime()),priceField.getValue(), descrField.getValue());
 
                 clearFields(priceField, selectClient,selectMaster, descrField,createField,finishField);
-                // TODO новый слой UI.getCurrent().setContent(new );
+                window.close();
 
             }
-
         });
-        Button cancelButton = cancelButton(window);
-        gridLayout.addComponent(descrField, 0, 0);
-        gridLayout.addComponent(selectClient, 1, 0);
-        gridLayout.addComponent(selectMaster, 2, 0);
-        gridLayout.addComponent(createField, 3, 0);
-        gridLayout.addComponent(finishField, 4, 0);
-        gridLayout.addComponent(priceField, 5, 0);
+        Button cancelButton = ChangeInterface.cancelButton(window);
+        panel.addComponent(descrField);
+        panel.addComponent(selectClient);
+        panel.addComponent(selectMaster);
+        panel.addComponent(createField);
+        panel.addComponent(finishField);
+        panel.addComponent(priceField);
 
-        gridLayout.addComponent(addButton, 3, 1);
-        gridLayout.addComponent(cancelButton, 4, 1);
-
-        addComponent(gridLayout);
+        changeOrderPart.addComponent(panel);
+        changeOrderPart.addComponent(addButton);
+        changeOrderPart.addComponent(cancelButton);
+        return changeOrderPart;
     }
 
     //delete order
-    public ChangeOrderPart(OrderDAO orderDAO, String id, BaseWindow window){
-        Order order = orderDAO.getOrder(id);
-        StringBuilder builder = new StringBuilder("Будет удален заказ №");
-        builder.append(order.getId()).append(" от ").append(order.getCreateDate()).append(" ").append("\n Продолжить?");
-        Label label = new Label(builder.toString());
+    public static ChangeOrderPart deleteOrder(OrderDAO orderDAO, BaseWindow window){
+        ChangeOrderPart changeOrderPart = new ChangeOrderPart();
+
+        HorizontalLayout layout = new HorizontalLayout();
+        layout.setCaption("Удалить заказ");
+
+        TextField numberField = new TextField("Введите номер заказа");
+        numberField.addValidator(numberValidator);
 
         Button deleteButton = new Button("Удалить");
         deleteButton.addClickListener((Button.ClickListener) clickEvent -> {
             try{
-                orderDAO.delOrder(id);
+                if (numberField.isValid()){
+                    orderDAO.delOrder(numberField.getValue());
+                    window.close();
+                }
             } catch (WrongDeleteException e){
-                Notification.show("Ошибка удаления",
-                        "Нельзя удалить заказ с этим номером!",
+                Notification.show("Ошибка удаления", "Нельзя удалить заказ с этим номером!",
                         Notification.TYPE_HUMANIZED_MESSAGE);
-                window.close();
+                numberField.clear();
             }
-
-            // TODO новый слой UI.getCurrent().setContent(new );
         });
-        Button closeButton = cancelButton(window);
+        Button closeButton = ChangeInterface.cancelButton(window);
 
-        addComponent(label);
-        addComponent(deleteButton);
-        addComponent(closeButton);
+        layout.addComponent(numberField);
+        layout.addComponent(deleteButton);
+        layout.addComponent(closeButton);
 
+        changeOrderPart.addComponent(layout);
+        return changeOrderPart;
     }
-    // update order
-    public ChangeOrderPart(OrderDAO orderDAO, MasterDAO masterDAO, String id, BaseWindow window){
-        GridLayout gridLayout = new GridLayout(4,4);
-        Order order = orderDAO.getOrder(id);
 
-        gridLayout.setSpacing(true);
-        gridLayout.setSizeFull();
+
+    // update order
+    public static ChangeOrderPart updateOrder(OrderDAO orderDAO, MasterDAO masterDAO, BaseWindow window){
+        ChangeOrderPart changeOrderPart = new ChangeOrderPart();
+        HorizontalLayout panel = new HorizontalLayout();
+        panel.setCaption("Обновить заказ");
+
+        HorizontalLayout updatePanel = new HorizontalLayout();
+        panel.setCaption("Детали заказа");
 
         TextField descrField = new TextField("Описание");
         TextField priceField = new TextField("Цена");
@@ -112,41 +124,58 @@ public class ChangeOrderPart extends VerticalLayout implements ChangeInterface {
         ComboBox selectMaster = new ComboBox("Исполнитель");
         ComboBox selectStatus = new ComboBox("Статус");
 
-        List<Master> masterList = masterDAO.getMasterList("","");
-        List<Status> statusList = Arrays.asList(Status.values());
+        List<Master> masterList = masterDAO.getMasterList();
+        List<String> statusList = Arrays.asList(statuses);
 
         masterList.forEach(e->selectMaster.addItem(e.getId()));
-        statusList.forEach(e->selectStatus.addItem(e.getDescription()));
-
-        descrField.setValue(order.getDescription());
-        priceField.setValue(order.getPrice().toString());
-        finishField.setValue(order.getFinishDate());
-        selectMaster.setValue(order.getMaster());
-        selectStatus.setValue(order.getStatus().getDescription());
+        statusList.forEach(e->selectStatus.addItem(e));
 
         priceField.addValidator(numberValidator);
 
-        Button updateButton = new Button("Сохранить изменения");
-        updateButton.addClickListener((Button.ClickListener) clickEvent -> {
-            if (checkValidate(descrField.isValid(), priceField.isValid(),
-                    finishField.isValid(), selectMaster.isValid(), selectStatus.isValid())){
-                orderDAO.updateOrder(order.getId(), descrField.getValue(),
-                        priceField.getValue(),finishField.getValue(), (Long) selectMaster.getValue(), (String) selectStatus.getValue());
-               Notification.show("Успешно!", "Заказ был успешно обновлен!", Notification.Type.HUMANIZED_MESSAGE);
-                // TODO новый слой UI.getCurrent().setContent(new );
+        TextField numberField = new TextField("Введите номер заказа");
+        numberField.addValidator(numberValidator);
+        Button numberButton = new Button("Изменить данный заказ");
 
+        panel.addComponent(numberField);
+        panel.addComponent(numberButton);
+
+        updatePanel.addComponent(descrField);
+        updatePanel.addComponent(priceField);
+        updatePanel.addComponent(finishField);
+        updatePanel.addComponent(selectMaster);
+        updatePanel.addComponent(selectStatus);
+        updatePanel.setVisible(false);
+
+        Button updateButton = new Button("Сохранить изменения");
+
+        numberButton.addClickListener((Button.ClickListener) clickEvent-> {
+            if (numberField.isValid()){
+                Order order = orderDAO.getOrder(numberField.getValue());
+                updatePanel.setVisible(true);
+                descrField.setValue(order.getDescription());
+                priceField.setValue(order.getPrice().toString());
+                finishField.setValue(order.getFinishDate());
+                selectMaster.setValue(order.getMaster());
+                selectStatus.setValue(order.getStatus());
+                updatePanel.addComponent(updateButton);
+
+                updateButton.addClickListener((Button.ClickListener) click -> {
+                    if (checkValidate(descrField.isValid(), priceField.isValid(),
+                            finishField.isValid(), selectMaster.isValid(), selectStatus.isValid())){
+                        orderDAO.updateOrder(order.getId(), descrField.getValue(),
+                                priceField.getValue(),new Date(finishField.getValue().getTime()), (Long) selectMaster.getValue(), (String) selectStatus.getValue());
+                        Notification.show("Успешно!", "Заказ был успешно обновлен!", Notification.Type.HUMANIZED_MESSAGE);
+                        window.close();
+                    }
+                });
             }
         });
+        Button closeButton = ChangeInterface.cancelButton(window);
 
-        Button closeButton = cancelButton(window);
-
-        addGridComponents(descrField,priceField, finishField,selectMaster,selectStatus,
-                updateButton, closeButton, gridLayout);
-
-        addComponent(gridLayout);
-
+        changeOrderPart.addComponent(panel);
+        changeOrderPart.addComponent(updatePanel);
+        changeOrderPart.addComponent(closeButton);
+        return changeOrderPart;
     }
-
-
 
 }
