@@ -6,6 +6,7 @@ import com.haulmont.testtask.data.exception.WrongDeleteException;
 import com.haulmont.testtask.ui.window.BaseWindow;
 import com.vaadin.data.validator.RegexpValidator;
 import com.vaadin.ui.*;
+import com.vaadin.ui.themes.ValoTheme;
 
 import static com.haulmont.testtask.ui.util.Utility.*;
 
@@ -80,6 +81,7 @@ public class ChangeClientPart extends VerticalLayout implements ChangeInterface 
             }
         });
         Button closeButton = ChangeInterface.cancelButton(baseWindow);
+        closeButton.setStyleName(ValoTheme.BUTTON_DANGER);
 
         layout.addComponent(numberField);
         layout.addComponent(deleteButton);

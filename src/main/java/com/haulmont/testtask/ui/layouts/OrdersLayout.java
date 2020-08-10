@@ -6,6 +6,7 @@ import com.haulmont.testtask.data.DAO.OrderDAO;
 import com.haulmont.testtask.data.DTO.OrderDTO;
 import com.haulmont.testtask.ui.window.BaseWindow;
 import com.vaadin.ui.*;
+import com.vaadin.ui.themes.ValoTheme;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,11 +20,18 @@ public class OrdersLayout extends VerticalLayout {
         MasterDAO masterDAO = new MasterDAO();
         ClientDAO clientDAO = new ClientDAO();
         HorizontalLayout buttons = getButtons();
+        buttons.setMargin(true);
 
         Grid grid = getList(orderDAO);
         grid.setSizeFull();
         HorizontalLayout searchPanel = new HorizontalLayout();
+        searchPanel.setMargin(true);
+
+        Label name = new Label("Страница информации о заказах");
+        name.setStyleName(ValoTheme.LABEL_H3);
+
         HorizontalLayout buttonPanel = new HorizontalLayout();
+        buttonPanel.setMargin(true);
 
         TextField descr = new TextField("Описание");
         TextField client = new TextField("Клиент");
@@ -49,6 +57,10 @@ public class OrdersLayout extends VerticalLayout {
         Button addButton = new Button("Добавить заказ");
         Button deleteButton = new Button("Удалить заказ");
 
+        updateButton.setStyleName(ValoTheme.BUTTON_PRIMARY);
+        addButton.setStyleName(ValoTheme.BUTTON_FRIENDLY);
+        deleteButton.setStyleName(ValoTheme.BUTTON_DANGER);
+
         buttonPanel.addComponent(updateButton);
         buttonPanel.addComponent(addButton);
         buttonPanel.addComponent(deleteButton);
@@ -73,7 +85,7 @@ public class OrdersLayout extends VerticalLayout {
         });
 
         addComponent(buttons);
-
+        addComponent(name);
         addComponent(buttonPanel);
         addComponent(searchPanel);
         addComponent(verticalLayout);

@@ -7,6 +7,7 @@ import com.haulmont.testtask.data.exception.WrongDeleteException;
 import com.haulmont.testtask.ui.window.BaseWindow;
 import com.vaadin.data.validator.RegexpValidator;
 import com.vaadin.ui.*;
+import com.vaadin.ui.themes.ValoTheme;
 
 import java.util.List;
 
@@ -169,6 +170,7 @@ public class ChangeMasterPart extends VerticalLayout implements ChangeInterface{
         list.forEach(e -> statisticList.addRow(e.getLastName(), e.getName(), e.getFatherName(), String.valueOf(e.getCountAll())));
 
         Button closeButton = ChangeInterface.cancelButton(window);
+        closeButton.setStyleName(ValoTheme.BUTTON_DANGER);
 
         changeMasterPart.addComponent(statisticList);
         changeMasterPart.addComponent(closeButton);

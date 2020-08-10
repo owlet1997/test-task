@@ -71,7 +71,7 @@ public class MasterDAO {
     }
 
     public void updateMaster(Long id, String fName, String lName, String fatherName, String salary){
-        String sql = "UPDATE master SET first_name = ?, last_name = ?, fatherName = ?, salary = ? WHERE id = ?";
+        String sql = "UPDATE master SET first_name = ?, last_name = ?, father_name = ?, salary = ? WHERE id = ?";
         Connection con = DataSourceConfig.getInstance();
         try {
             PreparedStatement ps = con.prepareStatement(sql);

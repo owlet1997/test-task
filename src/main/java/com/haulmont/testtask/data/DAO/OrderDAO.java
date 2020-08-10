@@ -109,6 +109,7 @@ public class OrderDAO {
                 order.setFinishDate(rs.getDate("finish_date"));
                 order.setPrice(rs.getDouble("price"));
                 order.setStatus(rs.getString("status"));
+                order.setDescription(rs.getString("descr"));
             }
         }catch (SQLException e){
             e.printStackTrace();
@@ -117,7 +118,7 @@ public class OrderDAO {
     }
 
     public void updateOrder(Long id, String description, String price, Date finishDate, Long masterId, String status){
-        String sql = "UPDATE orders set description = ?, price = ?, finish_date = ?, master = ?, status = ? WHERE id = ?";
+        String sql = "UPDATE orders set descr = ?, price = ?, finish_date = ?, master = ?, status = ? WHERE id = ?";
         Connection con = DataSourceConfig.getInstance();
         try{
             PreparedStatement ps = con.prepareStatement(sql);

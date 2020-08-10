@@ -15,9 +15,7 @@ public class MainUI extends UI {
     @Override
     protected void init(VaadinRequest request) {
         VerticalLayout verticalLayout = new VerticalLayout();
-        verticalLayout.addComponent(getButtons());
-        verticalLayout.setSizeFull();
-        verticalLayout.setMargin(true);
+        verticalLayout.addComponent(new OrdersLayout());
 
         setContent(verticalLayout);
     }

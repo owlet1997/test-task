@@ -4,6 +4,7 @@ import com.haulmont.testtask.data.DAO.MasterDAO;
 import com.haulmont.testtask.data.entities.Master;
 import com.haulmont.testtask.ui.window.BaseWindow;
 import com.vaadin.ui.*;
+import com.vaadin.ui.themes.ValoTheme;
 
 import java.util.List;
 
@@ -14,17 +15,27 @@ public class MasterLayout extends VerticalLayout {
     public MasterLayout(){
         MasterDAO masterDAO = new MasterDAO();
         HorizontalLayout buttons = getButtons();
+        buttons.setMargin(true);
+
+        Label name = new Label("Страница информации о мастерах");
+        name.setStyleName(ValoTheme.LABEL_H3);
+
 
         HorizontalLayout buttonPanel = new HorizontalLayout();
-        buttonPanel.setCaption("Страница информации о мастерах");
+        buttonPanel.setMargin(true);
 
         VerticalLayout layout = new VerticalLayout();
+        layout.setSizeFull();
+
         Grid grid = getList(masterDAO);
         grid.setSizeFull();
 
         Button updateButton = new Button("Изменить данные");
+        updateButton.setStyleName(ValoTheme.BUTTON_PRIMARY);
         Button addButton = new Button("Добавить мастера");
+        addButton.setStyleName(ValoTheme.BUTTON_FRIENDLY);
         Button deleteButton = new Button("Удалить мастера");
+        deleteButton.setStyleName(ValoTheme.BUTTON_DANGER);
         Button statButton = new Button("Показать статистику по заказам");
 
         buttonPanel.addComponent(updateButton);
@@ -56,6 +67,7 @@ public class MasterLayout extends VerticalLayout {
         });
 
         addComponent(buttons);
+        addComponent(name);
         addComponent(buttonPanel);
         layout.addComponent(grid);
         addComponent(layout);
@@ -63,6 +75,7 @@ public class MasterLayout extends VerticalLayout {
 
     private void refresh(VerticalLayout layout, Grid newGrid){
         layout.removeAllComponents();
+        newGrid.setSizeFull();
         layout.addComponent(newGrid);
     }
 
