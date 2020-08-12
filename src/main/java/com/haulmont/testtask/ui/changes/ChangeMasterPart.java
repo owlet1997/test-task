@@ -45,9 +45,10 @@ public class ChangeMasterPart extends VerticalLayout implements ChangeInterface{
         addButton.addClickListener((Button.ClickListener) clickEvent -> {
             if (checkValidate(nameField.isValid(), surnameField.isValid(),
                     fNameField.isValid(), salaryField.isValid())){
-                masterDAO.addMaster(nameField.getValue(),surnameField.getValue(), fNameField.getValue(),Long.parseLong(salaryField.getValue()));
-
-                clearFields(nameField,surnameField,fNameField, salaryField);
+                masterDAO.addMaster(surnameField.getValue(), nameField.getValue(), fNameField.getValue(),Long.parseLong(salaryField.getValue()));
+                Notification.show("Успешно!", "Мастер успешно добавлен!",
+                        Notification.TYPE_HUMANIZED_MESSAGE);
+                baseWindow.close();
                 }
         });
 
@@ -125,25 +126,31 @@ public class ChangeMasterPart extends VerticalLayout implements ChangeInterface{
 
         numberButton.addClickListener((Button.ClickListener) clickEvent-> {
             if (numberField.isValid()){
-                Master master = masterDAO.getMaster(numberField.getValue());
-                layout.setVisible(true);
-                nameField.setValue(master.getFirstName());
-                surnameField.setValue(master.getLastName());
-                fNameField.setValue(master.getFatherName());
-                salaryField.setValue(master.getSalary().toString());
-                Button updateButton = new Button("Сохранить изменения");
+                try {
+                    Master master = masterDAO.getMaster(numberField.getValue());
+                    layout.setVisible(true);
+                    nameField.setValue(master.getFirstName());
+                    surnameField.setValue(master.getLastName());
+                    fNameField.setValue(master.getFatherName());
+                    salaryField.setValue(master.getSalary().toString());
+                    Button updateButton = new Button("Сохранить изменения");
 
-                layout.addComponent(updateButton);
+                    layout.addComponent(updateButton);
 
-                updateButton.addClickListener((Button.ClickListener) click -> {
-                    if (checkValidate(nameField.isValid(), surnameField.isValid(),
-                            fNameField.isValid(), salaryField.isValid())){
-                        masterDAO.updateMaster(master.getId(), nameField.getValue(),
-                                surnameField.getValue(),fNameField.getValue(), salaryField.getValue());
-                        clearFields(nameField,surnameField,fNameField, salaryField);
-                        window.close();
-                    }
-                });
+                    updateButton.addClickListener((Button.ClickListener) click -> {
+                        if (checkValidate(nameField.isValid(), surnameField.isValid(),
+                                fNameField.isValid(), salaryField.isValid())){
+                            masterDAO.updateMaster(master.getId(), nameField.getValue(),
+                                    surnameField.getValue(),fNameField.getValue(), salaryField.getValue());
+                            clearFields(nameField,surnameField,fNameField, salaryField);
+                            window.close();
+                        }
+                    });
+                } catch (WrongDeleteException e){
+                    Notification.show("Ошибка удаления", "Нельзя удалить мастера с этим номером!",
+                            Notification.TYPE_HUMANIZED_MESSAGE);
+                    numberField.clear();
+                }
             }
         });
 
@@ -164,10 +171,13 @@ public class ChangeMasterPart extends VerticalLayout implements ChangeInterface{
         statisticList.addColumn("Имя");
         statisticList.addColumn("Отчество");
         statisticList.addColumn("Количество заказов");
+        statisticList.setSizeFull();
 
         List<StatisticsDTO> list = masterDAO.getStatistics();
 
         list.forEach(e -> statisticList.addRow(e.getLastName(), e.getName(), e.getFatherName(), String.valueOf(e.getCountAll())));
+
+        statisticList.setHeightByRows(list.size());
 
         Button closeButton = ChangeInterface.cancelButton(window);
         closeButton.setStyleName(ValoTheme.BUTTON_DANGER);

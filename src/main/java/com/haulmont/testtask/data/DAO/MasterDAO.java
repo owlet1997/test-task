@@ -87,9 +87,9 @@ public class MasterDAO {
 
     }
 
-    public Master getMaster(String id)  {
+    public Master getMaster(String id) throws WrongDeleteException {
         String sql = "SELECT * FROM master WHERE id = ? ";
-        Long masterId = Long.parseLong(id);
+        long masterId = Long.parseLong(id);
 
         Master master = new Master();
 
@@ -108,7 +108,8 @@ public class MasterDAO {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-                }
+            throw new WrongDeleteException("Нет мастера с таким кодом!");
+        }
         return master;
     }
 

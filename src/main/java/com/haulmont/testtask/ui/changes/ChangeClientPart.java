@@ -11,7 +11,7 @@ import com.vaadin.ui.themes.ValoTheme;
 import static com.haulmont.testtask.ui.util.Utility.*;
 
 public class ChangeClientPart extends VerticalLayout implements ChangeInterface {
-    static RegexpValidator numberValidator = new RegexpValidator("^[0-9]{1,4}$", "Wrong input");
+    static RegexpValidator numberValidator = new RegexpValidator("^[0-9]{1,12}$", "Wrong input");
     static RegexpValidator stringValidator = new RegexpValidator("^[А-ЯЁа-яёA-Za-z]{1,20}$", "Wrong input");
 
     public ChangeClientPart() {
@@ -81,8 +81,6 @@ public class ChangeClientPart extends VerticalLayout implements ChangeInterface 
             }
         });
         Button closeButton = ChangeInterface.cancelButton(baseWindow);
-        closeButton.setStyleName(ValoTheme.BUTTON_DANGER);
-
         layout.addComponent(numberField);
         layout.addComponent(deleteButton);
         layout.addComponent(closeButton);

@@ -8,17 +8,14 @@ import com.vaadin.ui.themes.ValoTheme;
 
 import java.util.List;
 
-import static com.haulmont.testtask.MainUI.getButtons;
-
 public class ClientsLayout extends VerticalLayout {
 
     public ClientsLayout(){
         ClientDAO clientDAO = new ClientDAO();
-        HorizontalLayout buttons = getButtons();
-        buttons.setMargin(true);
 
         Label name = new Label("Страница информации о клиентах");
-        name.setStyleName(ValoTheme.LABEL_H3);
+        name.setStyleName(ValoTheme.LABEL_COLORED);
+        name.setStyleName(ValoTheme.LABEL_H2);
 
         HorizontalLayout buttonPanel = new HorizontalLayout();
         buttonPanel.setMargin(true);
@@ -31,43 +28,38 @@ public class ClientsLayout extends VerticalLayout {
         addButton.setStyleName(ValoTheme.BUTTON_FRIENDLY);
         deleteButton.setStyleName(ValoTheme.BUTTON_DANGER);
 
-        Grid grid = getList(clientDAO);
-        grid.setSizeFull();
-
-        VerticalLayout layout = new VerticalLayout();
-        layout.addComponent(grid);
-
-
-        updateButton.addClickListener((Button.ClickListener) clickEvent -> {
-            new BaseWindow("Обновить клиента",clientDAO, "update");
-            Grid grid1 = getList(clientDAO);
-            refresh(layout, grid1);
-        });
-
-        addButton.addClickListener((Button.ClickListener) clickEvent -> {
-            new BaseWindow("Добавить клиента", clientDAO, "add");
-            Grid grid1 = getList(clientDAO);
-            refresh(layout, grid1);
-        });
-
-        deleteButton.addClickListener((Button.ClickListener) clickEvent ->{
-            new BaseWindow("Удалить клиента", clientDAO, "delete");
-            Grid grid1 = getList(clientDAO);
-            refresh(layout, grid1);
-        });
-
         buttonPanel.addComponent(addButton);
         buttonPanel.addComponent(updateButton);
         buttonPanel.addComponent(deleteButton);
 
-        addComponent(buttons);
+        Grid grid = getList(clientDAO);
+        grid.setSizeFull();
+
+        updateButton.addClickListener((Button.ClickListener) clickEvent -> {
+            new BaseWindow("Обновить клиента",clientDAO, "update");
+            refresh(this, buttonPanel, name, getList(clientDAO));
+        });
+
+        addButton.addClickListener((Button.ClickListener) clickEvent -> {
+            new BaseWindow("Добавить клиента", clientDAO, "add");
+            refresh(this, buttonPanel, name, getList(clientDAO));
+        });
+
+        deleteButton.addClickListener((Button.ClickListener) clickEvent ->{
+            new BaseWindow("Удалить клиента", clientDAO, "delete");
+            refresh(this, buttonPanel, name, getList(clientDAO));
+        });
+
         addComponent(name);
         addComponent(buttonPanel);
-        addComponent(layout);
+        addComponent(grid);
     }
 
-    private void refresh(VerticalLayout layout, Grid newGrid){
+    private void refresh(VerticalLayout layout, HorizontalLayout panel,
+                         Label label, Grid newGrid){
         layout.removeAllComponents();
+        layout.addComponent(label);
+        layout.addComponent(panel);
         newGrid.setSizeFull();
         layout.addComponent(newGrid);
     }
@@ -86,6 +78,7 @@ public class ClientsLayout extends VerticalLayout {
         clients.forEach(e -> grid.addRow(String.valueOf(e.getId()), e.getLastName(),
                 e.getFirstName(), e.getFatherName(), e.getPhone()));
 
+        grid.setHeightByRows(clients.size());
         return grid;
     }
 }

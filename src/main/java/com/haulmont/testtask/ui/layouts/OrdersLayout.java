@@ -11,16 +11,12 @@ import com.vaadin.ui.themes.ValoTheme;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.haulmont.testtask.MainUI.getButtons;
-
 public class OrdersLayout extends VerticalLayout {
 
     public OrdersLayout(){
         OrderDAO orderDAO = new OrderDAO();
         MasterDAO masterDAO = new MasterDAO();
         ClientDAO clientDAO = new ClientDAO();
-        HorizontalLayout buttons = getButtons();
-        buttons.setMargin(true);
 
         Grid grid = getList(orderDAO);
         grid.setSizeFull();
@@ -28,7 +24,8 @@ public class OrdersLayout extends VerticalLayout {
         searchPanel.setMargin(true);
 
         Label name = new Label("Страница информации о заказах");
-        name.setStyleName(ValoTheme.LABEL_H3);
+        name.setStyleName(ValoTheme.LABEL_COLORED);
+        name.setStyleName(ValoTheme.LABEL_H2);
 
         HorizontalLayout buttonPanel = new HorizontalLayout();
         buttonPanel.setMargin(true);
@@ -84,7 +81,6 @@ public class OrdersLayout extends VerticalLayout {
             refresh(verticalLayout, grid1);
         });
 
-        addComponent(buttons);
         addComponent(name);
         addComponent(buttonPanel);
         addComponent(searchPanel);

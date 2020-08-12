@@ -14,35 +14,17 @@ public class MainUI extends UI {
 
     @Override
     protected void init(VaadinRequest request) {
-        VerticalLayout verticalLayout = new VerticalLayout();
-        verticalLayout.addComponent(new OrdersLayout());
+        TabSheet tabSheet = new TabSheet();
 
-        setContent(verticalLayout);
+        VerticalLayout ordersLayout = new OrdersLayout();
+        VerticalLayout masterLayout = new MasterLayout();
+        VerticalLayout clientLayout = new ClientsLayout();
+
+        tabSheet.addTab(ordersLayout, "Заказы");
+        tabSheet.addTab(masterLayout, "Мастера");
+        tabSheet.addTab(clientLayout, "Клиенты");
+
+        UI.getCurrent().setContent(tabSheet);
     }
 
-    public static HorizontalLayout getButtons(){
-        Button showMasters = new Button("Информация о мастерах");
-        Button showClients = new Button("Информация о клиентах");
-        Button showOrders = new Button("Информация о заказах");
-
-        showMasters.addClickListener((Button.ClickListener) clickEvent ->{
-            UI.getCurrent().setContent(new MasterLayout());
-        });
-
-        showClients.addClickListener((Button.ClickListener) clickListener ->{
-            UI.getCurrent().setContent(new ClientsLayout());
-        });
-
-        showOrders.addClickListener((Button.ClickListener) clickListener -> {
-            UI.getCurrent().setContent(new OrdersLayout());
-        });
-
-        HorizontalLayout layout = new HorizontalLayout();
-        layout.addComponent(showMasters);
-        layout.addComponent(showClients);
-        layout.addComponent(showOrders);
-
-        return layout;
-
-    }
 }

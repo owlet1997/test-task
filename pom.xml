@@ -48,20 +48,6 @@
     <dependencies>
         <dependency>
             <groupId>com.vaadin</groupId>
-            <artifactId>vaadin-bom</artifactId>
-            <version>16.0.2</version>
-            <type>pom</type>
-            <scope>import</scope>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/com.vaadin/vaadin-tabs-flow -->
-        <dependency>
-            <groupId>com.vaadin</groupId>
-            <artifactId>vaadin-tabs-flow</artifactId>
-            <version>3.1.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.vaadin</groupId>
             <artifactId>vaadin-server</artifactId>
             <version>${vaadin.version}</version>
         </dependency>
@@ -79,7 +65,6 @@
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
             <version>2.4</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>javax.persistence</groupId>
@@ -90,7 +75,6 @@
             <groupId>org.hsqldb</groupId>
             <artifactId>hsqldb</artifactId>
             <version>2.4.0</version>
-            <scope>compile</scope>
         </dependency>
 
     </dependencies>

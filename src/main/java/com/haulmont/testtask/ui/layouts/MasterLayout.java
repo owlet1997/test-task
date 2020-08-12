@@ -8,18 +8,14 @@ import com.vaadin.ui.themes.ValoTheme;
 
 import java.util.List;
 
-import static com.haulmont.testtask.MainUI.getButtons;
 
 public class MasterLayout extends VerticalLayout {
 
     public MasterLayout(){
         MasterDAO masterDAO = new MasterDAO();
-        HorizontalLayout buttons = getButtons();
-        buttons.setMargin(true);
 
-        Label name = new Label("Страница информации о мастерах");
-        name.setStyleName(ValoTheme.LABEL_H3);
-
+         Label name = new Label("Страница информации о мастерах");
+        name.setStyleName(ValoTheme.LABEL_COLORED);
 
         HorizontalLayout buttonPanel = new HorizontalLayout();
         buttonPanel.setMargin(true);
@@ -66,7 +62,6 @@ public class MasterLayout extends VerticalLayout {
            new BaseWindow("Статистика", masterDAO, "stat");
         });
 
-        addComponent(buttons);
         addComponent(name);
         addComponent(buttonPanel);
         layout.addComponent(grid);
