@@ -6,14 +6,14 @@ import com.haulmont.testtask.data.DAO.OrderDAO;
 import com.haulmont.testtask.data.entities.Client;
 import com.haulmont.testtask.data.entities.Master;
 import com.haulmont.testtask.data.entities.Order;
-import com.haulmont.testtask.data.exception.WrongDeleteException;
+import com.haulmont.testtask.data.exception.WrongGetException;
 import com.haulmont.testtask.ui.window.BaseWindow;
 import com.vaadin.data.validator.RegexpValidator;
+import com.vaadin.shared.ui.window.WindowMode;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 
 import java.sql.Date;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -21,6 +21,8 @@ import static com.haulmont.testtask.ui.util.Utility.*;
 
 public class ChangeOrderPart extends VerticalLayout implements ChangeInterface {
     static RegexpValidator numberValidator = new RegexpValidator("^[0-9]{1,4}$", "Wrong input");
+    static RegexpValidator priceValidator = new RegexpValidator("^[0-9.]{1,12}$", "Wrong input");
+
     static RegexpValidator stringValidator = new RegexpValidator("^[А-ЯЁа-яёA-Za-z]{1,20}$", "Wrong input");
 
     private final static String[] statuses = new String[]{"Запланирован", "Выполнен", "Принят клиентом"};
@@ -42,7 +44,7 @@ public class ChangeOrderPart extends VerticalLayout implements ChangeInterface {
         ComboBox selectClient = new ComboBox("Заказчик");
         ComboBox selectMaster = new ComboBox("Исполнитель");
 
-        priceField.addValidator(numberValidator);
+        priceField.addValidator(priceValidator);
 
         List<Client> clientList = clientDAO.getClientList();
         List<Master> masterList = masterDAO.getMasterList();
@@ -57,7 +59,6 @@ public class ChangeOrderPart extends VerticalLayout implements ChangeInterface {
                 orderDAO.addOrder((String) selectClient.getValue(), (String) selectMaster.getValue(),
                         new Date(createField.getValue().getTime()), new Date(finishField.getValue().getTime()),priceField.getValue(), descrField.getValue());
 
-                clearFields(priceField, selectClient,selectMaster, descrField,createField,finishField);
                 window.close();
 
             }
@@ -93,7 +94,7 @@ public class ChangeOrderPart extends VerticalLayout implements ChangeInterface {
                     orderDAO.delOrder(numberField.getValue());
                     window.close();
                 }
-            } catch (WrongDeleteException e){
+            } catch (WrongGetException e){
                 Notification.show("Ошибка удаления", "Нельзя удалить заказ с этим номером!",
                         Notification.TYPE_HUMANIZED_MESSAGE);
                 numberField.clear();
@@ -114,8 +115,11 @@ public class ChangeOrderPart extends VerticalLayout implements ChangeInterface {
     // update order
     public static ChangeOrderPart updateOrder(OrderDAO orderDAO, MasterDAO masterDAO, BaseWindow window){
         ChangeOrderPart changeOrderPart = new ChangeOrderPart();
+        window.setHeightUndefined();
+        window.setWindowMode(WindowMode.NORMAL);
         HorizontalLayout panel = new HorizontalLayout();
         panel.setCaption("Обновить заказ");
+        panel.setDefaultComponentAlignment(Alignment.TOP_CENTER);
 
         HorizontalLayout updatePanel = new HorizontalLayout();
         panel.setCaption("Детали заказа");

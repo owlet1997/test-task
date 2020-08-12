@@ -2,7 +2,7 @@ package com.haulmont.testtask.data.DAO;
 
 import com.haulmont.testtask.DataSourceConfig;
 import com.haulmont.testtask.data.entities.Client;
-import com.haulmont.testtask.data.exception.WrongDeleteException;
+import com.haulmont.testtask.data.exception.WrongGetException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -40,7 +40,7 @@ public class ClientDAO {
         }
     }
 
-    public void delClient(String number) throws WrongDeleteException {
+    public void delClient(String number) throws WrongGetException {
         String sql = "DELETE  FROM client WHERE id = ? ";
         Connection con = DataSourceConfig.getInstance();
         try {
@@ -50,7 +50,7 @@ public class ClientDAO {
 
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new WrongDeleteException("Нельзя удалить этого клиента!");
+            throw new WrongGetException("Нельзя удалить этого клиента!");
         }
     }
 
@@ -95,7 +95,7 @@ public class ClientDAO {
 
     }
 
-    public Client getClient(String id) {
+    public Client getClient(String id) throws WrongGetException {
         String sql = "SELECT * FROM client WHERE id = ? ";
         Long clientId = Long.parseLong(id);
 
@@ -116,6 +116,7 @@ public class ClientDAO {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            throw new WrongGetException("Нет клиента с таки номером!");
         }
         return client;
     }

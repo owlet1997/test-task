@@ -15,11 +15,4 @@ public class Utility {
         return result;
     }
 
-    public static void clearFields(Field ... components){
-        for (Field component : components) {
-            component.clear();
-        }
-    }
-
-
 }

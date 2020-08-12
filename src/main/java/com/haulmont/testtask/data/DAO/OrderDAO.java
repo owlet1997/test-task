@@ -3,7 +3,7 @@ package com.haulmont.testtask.data.DAO;
 import com.haulmont.testtask.DataSourceConfig;
 import com.haulmont.testtask.data.DTO.OrderDTO;
 import com.haulmont.testtask.data.entities.Order;
-import com.haulmont.testtask.data.exception.WrongDeleteException;
+import com.haulmont.testtask.data.exception.WrongGetException;
 
 import java.sql.*;
 
@@ -34,7 +34,7 @@ public class OrderDAO {
         }
     }
 
-    public void delOrder(String number) throws WrongDeleteException {
+    public void delOrder(String number) throws WrongGetException {
         String sql = "DELETE  FROM orders WHERE id = ? ";
         Connection con = DataSourceConfig.getInstance();
         try {
@@ -44,7 +44,7 @@ public class OrderDAO {
 
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new WrongDeleteException("Нельзя удалить заказ!");
+            throw new WrongGetException("Нельзя удалить заказ!");
         }
     }
 

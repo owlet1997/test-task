@@ -17,13 +17,13 @@ public class BaseWindow extends Window {
     public BaseWindow(String caption, ClientDAO dao, String flag) {
         switch (flag){
             case "update":
-                getWindow(caption, "400px", "1500px", updateClient(dao, this));
+                getWindow(caption, updateClient(dao, this));
                 break;
             case "add":
-                getWindow(caption, "400px", "1500px", addClient(dao, this));
+                getWindow(caption,  addClient(dao, this));
                 break;
             case "delete":
-                getWindow(caption, "400px", "1500px", deleteClient(dao, this));
+                getWindow(caption, deleteClient(dao, this));
                 break;
         }
     }
@@ -31,16 +31,16 @@ public class BaseWindow extends Window {
     public BaseWindow(String caption, MasterDAO dao, String flag){
         switch (flag){
             case "delete":
-                getWindow(caption, "400px", "1500px", deleteMaster(dao, this));
+                getWindow(caption,  deleteMaster(dao, this));
                 break;
             case "add":
-                getWindow(caption, "400px", "1500px", addMaster(dao,this));
+                getWindow(caption,  addMaster(dao,this));
                 break;
             case "update":
-                getWindow(caption, "400px", "1500px", updateMaster(dao, this));
+                getWindow(caption,  updateMaster(dao, this));
                 break;
             case "stat":
-                getWindow(caption, "500px", "1500px", getStatistics(dao, this));
+                getWindow(caption,  getStatistics(dao, this));
                 break;
         }
 
@@ -48,26 +48,23 @@ public class BaseWindow extends Window {
 
     // добавить заказ
     public BaseWindow(String caption, OrderDAO orderDAO, MasterDAO masterDAO, ClientDAO clientDAO){
-        getWindow(caption, "400px", "1500px", addOrder(orderDAO,masterDAO,clientDAO,this));
+        getWindow(caption,  addOrder(orderDAO,masterDAO,clientDAO,this));
     }
 
     // удалить заказ
     public BaseWindow(String caption, OrderDAO orderDAO){
-        getWindow(caption, "400px", "1500px", deleteOrder(orderDAO, this));
+        getWindow(caption,  deleteOrder(orderDAO, this));
     }
 
 //    обновить заказ
     public BaseWindow(String caption, OrderDAO orderDAO, MasterDAO masterDAO){
-        getWindow(caption,"400px", "1500px", updateOrder(orderDAO, masterDAO, this));
+        getWindow(caption,updateOrder(orderDAO, masterDAO, this));
     }
 
-    private void getWindow(String caption, String height,
-                           String width, ChangeInterface changeInterface){
+    private void getWindow(String caption, ChangeInterface changeInterface){
         setCaption(caption);
         setContent((Component) changeInterface);
         center();
-        setHeight(height);
-        setWidth(width);
         setModal(true);
         UI.getCurrent().addWindow(this);
     }

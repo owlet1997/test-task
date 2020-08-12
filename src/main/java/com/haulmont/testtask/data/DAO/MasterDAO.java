@@ -3,7 +3,7 @@ package com.haulmont.testtask.data.DAO;
 import com.haulmont.testtask.data.DTO.StatisticsDTO;
 import com.haulmont.testtask.DataSourceConfig;
 import com.haulmont.testtask.data.entities.Master;
-import com.haulmont.testtask.data.exception.WrongDeleteException;
+import com.haulmont.testtask.data.exception.WrongGetException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -31,7 +31,7 @@ public class MasterDAO {
         }
     }
 
-    public void delMaster(String number) throws WrongDeleteException{
+    public void delMaster(String number) throws WrongGetException {
         String sql = "DELETE  FROM master WHERE id = ? ";
         Connection con = DataSourceConfig.getInstance();
         try {
@@ -41,7 +41,7 @@ public class MasterDAO {
 
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new WrongDeleteException("Нельзя удалить данного мастера!");
+            throw new WrongGetException("Нельзя удалить данного мастера!");
 
         }
     }
@@ -87,7 +87,7 @@ public class MasterDAO {
 
     }
 
-    public Master getMaster(String id) throws WrongDeleteException {
+    public Master getMaster(String id) throws WrongGetException {
         String sql = "SELECT * FROM master WHERE id = ? ";
         long masterId = Long.parseLong(id);
 
@@ -108,7 +108,7 @@ public class MasterDAO {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new WrongDeleteException("Нет мастера с таким кодом!");
+            throw new WrongGetException("Нет мастера с таким кодом!");
         }
         return master;
     }

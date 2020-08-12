@@ -2,11 +2,10 @@ package com.haulmont.testtask.ui.changes;
 
 import com.haulmont.testtask.data.DAO.ClientDAO;
 import com.haulmont.testtask.data.entities.Client;
-import com.haulmont.testtask.data.exception.WrongDeleteException;
+import com.haulmont.testtask.data.exception.WrongGetException;
 import com.haulmont.testtask.ui.window.BaseWindow;
 import com.vaadin.data.validator.RegexpValidator;
 import com.vaadin.ui.*;
-import com.vaadin.ui.themes.ValoTheme;
 
 import static com.haulmont.testtask.ui.util.Utility.*;
 
@@ -45,7 +44,6 @@ public class ChangeClientPart extends VerticalLayout implements ChangeInterface 
                     fNameField.isValid(), phoneField.isValid())){
                 clientDAO.addClient(nameField.getValue(),surnameField.getValue(), fNameField.getValue(),phoneField.getValue());
 
-                clearFields(nameField,surnameField,fNameField, phoneField);
                 baseWindow.close();
             }
         });
@@ -74,9 +72,9 @@ public class ChangeClientPart extends VerticalLayout implements ChangeInterface 
                     clientDAO.delClient(numberField.getValue());
                     baseWindow.close();
                 }
-            } catch (WrongDeleteException e){
-                Notification.show("Ошибка удаления", "Нельзя удалить мастера с этим номером!",
-                        Notification.TYPE_HUMANIZED_MESSAGE);
+            } catch (WrongGetException e){
+                Notification.show("Ошибка удаления", "Нельзя удалить клиента с этим номером!",
+                        Notification.Type.WARNING_MESSAGE);
                 numberField.clear();
             }
         });
@@ -121,25 +119,31 @@ public class ChangeClientPart extends VerticalLayout implements ChangeInterface 
 
         numberButton.addClickListener((Button.ClickListener) clickEvent-> {
             if (numberField.isValid()){
-                Client client = clientDAO.getClient(numberField.getValue());
-                layout.setVisible(true);
-                nameField.setValue(client.getFirstName());
-                surnameField.setValue(client.getLastName());
-                fNameField.setValue(client.getFatherName());
-                phoneField.setValue(client.getPhone());
-                Button updateButton = new Button("Сохранить изменения");
+                try{
+                    Client client = clientDAO.getClient(numberField.getValue());
+                    layout.setVisible(true);
+                    nameField.setValue(client.getFirstName());
+                    surnameField.setValue(client.getLastName());
+                    fNameField.setValue(client.getFatherName());
+                    phoneField.setValue(client.getPhone());
+                    Button updateButton = new Button("Сохранить изменения");
 
-                layout.addComponent(updateButton);
+                    layout.addComponent(updateButton);
 
-                updateButton.addClickListener((Button.ClickListener) click -> {
-                    if (checkValidate(nameField.isValid(), surnameField.isValid(),
-                            fNameField.isValid(), phoneField.isValid())){
-                        clientDAO.updateClient(client.getId(), nameField.getValue(),
-                                surnameField.getValue(),fNameField.getValue(), phoneField.getValue());
-                        clearFields(nameField,surnameField,fNameField, phoneField);
-                        window.close();
-                    }
-                });
+                    updateButton.addClickListener((Button.ClickListener) click -> {
+                        if (checkValidate(nameField.isValid(), surnameField.isValid(),
+                                fNameField.isValid(), phoneField.isValid())){
+                            clientDAO.updateClient(client.getId(), nameField.getValue(),
+                                    surnameField.getValue(),fNameField.getValue(), phoneField.getValue());
+                            window.close();
+                        }
+                    });
+                } catch (WrongGetException e){
+                    Notification.show("Ошибка обновления", e.getMessage(),
+                            Notification.Type.WARNING_MESSAGE);
+                    numberField.clear();
+                }
+
             }
         });
 

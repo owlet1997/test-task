@@ -3,7 +3,7 @@ package com.haulmont.testtask.ui.changes;
 import com.haulmont.testtask.data.DAO.MasterDAO;
 import com.haulmont.testtask.data.DTO.StatisticsDTO;
 import com.haulmont.testtask.data.entities.Master;
-import com.haulmont.testtask.data.exception.WrongDeleteException;
+import com.haulmont.testtask.data.exception.WrongGetException;
 import com.haulmont.testtask.ui.window.BaseWindow;
 import com.vaadin.data.validator.RegexpValidator;
 import com.vaadin.ui.*;
@@ -77,7 +77,7 @@ public class ChangeMasterPart extends VerticalLayout implements ChangeInterface{
                     masterDAO.delMaster(numberField.getValue());
                     baseWindow.close();
                 }
-            } catch (WrongDeleteException e){
+            } catch (WrongGetException e){
                 Notification.show("Ошибка удаления", "Нельзя удалить мастера с этим номером!",
                         Notification.TYPE_HUMANIZED_MESSAGE);
                 numberField.clear();
@@ -142,11 +142,10 @@ public class ChangeMasterPart extends VerticalLayout implements ChangeInterface{
                                 fNameField.isValid(), salaryField.isValid())){
                             masterDAO.updateMaster(master.getId(), nameField.getValue(),
                                     surnameField.getValue(),fNameField.getValue(), salaryField.getValue());
-                            clearFields(nameField,surnameField,fNameField, salaryField);
                             window.close();
                         }
                     });
-                } catch (WrongDeleteException e){
+                } catch (WrongGetException e){
                     Notification.show("Ошибка удаления", "Нельзя удалить мастера с этим номером!",
                             Notification.TYPE_HUMANIZED_MESSAGE);
                     numberField.clear();
