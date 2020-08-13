@@ -3,14 +3,14 @@ package com.haulmont.testtask.ui.window;
 import com.haulmont.testtask.data.DAO.ClientDAO;
 import com.haulmont.testtask.data.DAO.MasterDAO;
 import com.haulmont.testtask.data.DAO.OrderDAO;
-import com.haulmont.testtask.ui.changes.ChangeInterface;
+import com.haulmont.testtask.ui.modals.ChangeInterface;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.Window;
 
-import static com.haulmont.testtask.ui.changes.ChangeClientPart.*;
-import static com.haulmont.testtask.ui.changes.ChangeMasterPart.*;
-import static com.haulmont.testtask.ui.changes.ChangeOrderPart.*;
+import static com.haulmont.testtask.ui.modals.ChangeClientModal.*;
+import static com.haulmont.testtask.ui.modals.ChangeMasterModal.*;
+import static com.haulmont.testtask.ui.modals.ChangeOrderModal.*;
 
 public class BaseWindow extends Window {
 

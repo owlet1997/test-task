@@ -1,4 +1,4 @@
-package com.haulmont.testtask.ui.changes;
+package com.haulmont.testtask.ui.modals;
 
 import com.haulmont.testtask.data.DAO.ClientDAO;
 import com.haulmont.testtask.data.entities.Client;
@@ -7,18 +7,16 @@ import com.haulmont.testtask.ui.window.BaseWindow;
 import com.vaadin.data.validator.RegexpValidator;
 import com.vaadin.ui.*;
 
-import static com.haulmont.testtask.ui.util.Utility.*;
-
-public class ChangeClientPart extends VerticalLayout implements ChangeInterface {
+public class ChangeClientModal extends VerticalLayout implements ChangeInterface {
     static RegexpValidator numberValidator = new RegexpValidator("^[0-9]{1,12}$", "Wrong input");
     static RegexpValidator stringValidator = new RegexpValidator("^[А-ЯЁа-яёA-Za-z]{1,20}$", "Wrong input");
 
-    public ChangeClientPart() {
+    public ChangeClientModal() {
     }
 
     // добавить клиента
-    public static ChangeClientPart addClient(ClientDAO clientDAO, BaseWindow baseWindow){
-        ChangeClientPart changeClientPart = new ChangeClientPart();
+    public static ChangeClientModal addClient(ClientDAO clientDAO, BaseWindow baseWindow){
+        ChangeClientModal changeClientPart = new ChangeClientModal();
         HorizontalLayout panel = new HorizontalLayout();
 
         TextField nameField = new TextField("Имя");
@@ -38,10 +36,12 @@ public class ChangeClientPart extends VerticalLayout implements ChangeInterface 
         panel.addComponent(fNameField);
         panel.addComponent(phoneField);
         panel.addComponent(addButton);
+        addButton.setEnabled(false);
 
         addButton.addClickListener((Button.ClickListener) clickEvent -> {
-            if (checkValidate(nameField.isValid(), surnameField.isValid(),
-                    fNameField.isValid(), phoneField.isValid())){
+            if (nameField.isValid() && surnameField.isValid() &&
+                    fNameField.isValid() && phoneField.isValid()){
+                addButton.setEnabled(true);
                 clientDAO.addClient(nameField.getValue(),surnameField.getValue(), fNameField.getValue(),phoneField.getValue());
 
                 baseWindow.close();
@@ -56,8 +56,8 @@ public class ChangeClientPart extends VerticalLayout implements ChangeInterface 
     }
 
     // delete client
-    public static ChangeClientPart deleteClient(ClientDAO clientDAO, BaseWindow baseWindow){
-        ChangeClientPart changeClientPart = new ChangeClientPart();
+    public static ChangeClientModal deleteClient(ClientDAO clientDAO, BaseWindow baseWindow){
+        ChangeClientModal changeClientPart = new ChangeClientModal();
 
         HorizontalLayout layout = new HorizontalLayout();
         layout.setCaption("Удалить клиента");
@@ -88,8 +88,8 @@ public class ChangeClientPart extends VerticalLayout implements ChangeInterface 
     }
 
     // update client
-    public static ChangeClientPart updateClient(ClientDAO clientDAO, BaseWindow window){
-         ChangeClientPart changeClientPart = new ChangeClientPart();
+    public static ChangeClientModal updateClient(ClientDAO clientDAO, BaseWindow window){
+         ChangeClientModal changeClientPart = new ChangeClientModal();
 
         HorizontalLayout panel = new HorizontalLayout();
         panel.setCaption("Обновить данные о клиенте");
@@ -122,8 +122,8 @@ public class ChangeClientPart extends VerticalLayout implements ChangeInterface 
                 try{
                     Client client = clientDAO.getClient(numberField.getValue());
                     layout.setVisible(true);
-                    nameField.setValue(client.getFirstName());
-                    surnameField.setValue(client.getLastName());
+                    nameField.setValue(client.getName());
+                    surnameField.setValue(client.getSurname());
                     fNameField.setValue(client.getFatherName());
                     phoneField.setValue(client.getPhone());
                     Button updateButton = new Button("Сохранить изменения");
@@ -131,8 +131,8 @@ public class ChangeClientPart extends VerticalLayout implements ChangeInterface 
                     layout.addComponent(updateButton);
 
                     updateButton.addClickListener((Button.ClickListener) click -> {
-                        if (checkValidate(nameField.isValid(), surnameField.isValid(),
-                                fNameField.isValid(), phoneField.isValid())){
+                        if (nameField.isValid() && surnameField.isValid() &&
+                                fNameField.isValid() && phoneField.isValid()){
                             clientDAO.updateClient(client.getId(), nameField.getValue(),
                                     surnameField.getValue(),fNameField.getValue(), phoneField.getValue());
                             window.close();

@@ -1,4 +1,4 @@
-package com.haulmont.testtask.ui.changes;
+package com.haulmont.testtask.ui.modals;
 
 import com.haulmont.testtask.data.DAO.ClientDAO;
 import com.haulmont.testtask.data.DAO.MasterDAO;
@@ -17,9 +17,7 @@ import java.sql.Date;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.haulmont.testtask.ui.util.Utility.*;
-
-public class ChangeOrderPart extends VerticalLayout implements ChangeInterface {
+public class ChangeOrderModal extends VerticalLayout implements ChangeInterface {
     static RegexpValidator numberValidator = new RegexpValidator("^[0-9]{1,4}$", "Wrong input");
     static RegexpValidator priceValidator = new RegexpValidator("^[0-9.]{1,12}$", "Wrong input");
 
@@ -28,11 +26,11 @@ public class ChangeOrderPart extends VerticalLayout implements ChangeInterface {
     private final static String[] statuses = new String[]{"Запланирован", "Выполнен", "Принят клиентом"};
 
 
-    public ChangeOrderPart() {}
+    public ChangeOrderModal() {}
 
     // add order
-    public static ChangeOrderPart addOrder(OrderDAO orderDAO, MasterDAO masterDAO, ClientDAO clientDAO, BaseWindow window){
-        ChangeOrderPart changeOrderPart = new ChangeOrderPart();
+    public static ChangeOrderModal addOrder(OrderDAO orderDAO, MasterDAO masterDAO, ClientDAO clientDAO, BaseWindow window){
+        ChangeOrderModal changeOrderPart = new ChangeOrderModal();
         HorizontalLayout panel = new HorizontalLayout();
         panel.setCaption("Добавление заказа");
 
@@ -55,7 +53,7 @@ public class ChangeOrderPart extends VerticalLayout implements ChangeInterface {
         Button addButton = new Button("Добавить заказ");
         addButton.addClickListener((Button.ClickListener) clickEvent -> {
 
-            if (checkValidate(priceField.isValid(), selectClient.isValid(), selectMaster.isValid(), descrField.isValid())){
+            if (priceField.isValid() && selectClient.isValid() && selectMaster.isValid() && descrField.isValid()){
                 orderDAO.addOrder((String) selectClient.getValue(), (String) selectMaster.getValue(),
                         new Date(createField.getValue().getTime()), new Date(finishField.getValue().getTime()),priceField.getValue(), descrField.getValue());
 
@@ -78,8 +76,8 @@ public class ChangeOrderPart extends VerticalLayout implements ChangeInterface {
     }
 
     //delete order
-    public static ChangeOrderPart deleteOrder(OrderDAO orderDAO, BaseWindow window){
-        ChangeOrderPart changeOrderPart = new ChangeOrderPart();
+    public static ChangeOrderModal deleteOrder(OrderDAO orderDAO, BaseWindow window){
+        ChangeOrderModal changeOrderPart = new ChangeOrderModal();
 
         HorizontalLayout layout = new HorizontalLayout();
         layout.setCaption("Удалить заказ");
@@ -96,7 +94,7 @@ public class ChangeOrderPart extends VerticalLayout implements ChangeInterface {
                 }
             } catch (WrongGetException e){
                 Notification.show("Ошибка удаления", "Нельзя удалить заказ с этим номером!",
-                        Notification.TYPE_HUMANIZED_MESSAGE);
+                        Notification.Type.WARNING_MESSAGE);
                 numberField.clear();
             }
         });
@@ -113,8 +111,8 @@ public class ChangeOrderPart extends VerticalLayout implements ChangeInterface {
 
 
     // update order
-    public static ChangeOrderPart updateOrder(OrderDAO orderDAO, MasterDAO masterDAO, BaseWindow window){
-        ChangeOrderPart changeOrderPart = new ChangeOrderPart();
+    public static ChangeOrderModal updateOrder(OrderDAO orderDAO, MasterDAO masterDAO, BaseWindow window){
+        ChangeOrderModal changeOrderPart = new ChangeOrderModal();
         window.setHeightUndefined();
         window.setWindowMode(WindowMode.NORMAL);
         HorizontalLayout panel = new HorizontalLayout();
@@ -166,8 +164,8 @@ public class ChangeOrderPart extends VerticalLayout implements ChangeInterface {
                 updatePanel.addComponent(updateButton);
 
                 updateButton.addClickListener((Button.ClickListener) click -> {
-                    if (checkValidate(descrField.isValid(), priceField.isValid(),
-                            finishField.isValid(), selectMaster.isValid(), selectStatus.isValid())){
+                    if (descrField.isValid() && priceField.isValid() &&
+                            finishField.isValid() && selectMaster.isValid() && selectStatus.isValid()){
                         orderDAO.updateOrder(order.getId(), descrField.getValue(),
                                 priceField.getValue(),new Date(finishField.getValue().getTime()), (Long) selectMaster.getValue(), (String) selectStatus.getValue());
                         Notification.show("Успешно!", "Заказ был успешно обновлен!", Notification.Type.HUMANIZED_MESSAGE);

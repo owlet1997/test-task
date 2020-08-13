@@ -12,6 +12,18 @@ import java.util.List;
 
 public class OrderDAO {
 
+    private static OrderDAO orderDAO;
+
+    private OrderDAO(){
+
+    }
+    public static OrderDAO getInstance() {
+        if (orderDAO == null){
+            orderDAO = new OrderDAO();
+        }
+        return orderDAO;
+    }
+
     public void addOrder(String client, String master, Date createDate,
                          Date finishDate, String price, String descr) {
 
@@ -49,9 +61,11 @@ public class OrderDAO {
     }
 
     public List<OrderDTO> getOrderDTOList(){
-        String sql = "SELECT * FROM orders";
-        String sqlClientSurname = "SELECT last_name FROM client WHERE id = ?";
-        String sqlMasterSurname = "SELECT last_name FROM master WHERE id = ?";
+        String sql = "SELECT o.id as id, c.last_name as client_surname, m.last_name as master_surname, o.create_date as date_create, " +
+                "o.finish_date as date_finish, o.price as price, o.status as status, o.descr as descr" +
+                " FROM orders o inner join client c on o.client=c.id " +
+                "inner join master m on o.master=m.id";
+
         List<OrderDTO> orderList = new ArrayList<>();
         Connection con = DataSourceConfig.getInstance();
         try {
@@ -61,28 +75,13 @@ public class OrderDAO {
             while (rs.next()){
                     OrderDTO order = new OrderDTO();
                     order.setId(rs.getLong("id"));
-                    PreparedStatement psClient = con.prepareStatement(sqlClientSurname);
-                    PreparedStatement psMaster = con.prepareStatement(sqlMasterSurname);
-                    psClient.setLong(1,rs.getLong("client"));
-                    psMaster.setLong(1,rs.getLong("master"));
-                    ResultSet rsClient = psClient.executeQuery();
-                    ResultSet rsMaster = psMaster.executeQuery();
-                    String surnameCl = "";
-                    String surnameMas = "";
-                    if (rsClient.next()){
-                        surnameCl = rsClient.getString("last_name");
-                    }
-                    order.setClientSurname(surnameCl);
-                    if (rsMaster.next()){
-                        surnameMas = rsMaster.getString("last_name");
-                    }
-                    order.setMasterSurname(surnameMas);
-                    order.setCreateDate(rs.getDate("create_date").toString());
-                    order.setFinishDate(rs.getDate("finish_date").toString());
+                    order.setClientSurname(rs.getString("client_surname"));
+                    order.setMasterSurname(rs.getString("master_surname"));
+                    order.setCreateDate(rs.getDate("date_create").toString());
+                    order.setFinishDate(rs.getDate("date_finish").toString());
                     order.setPrice(rs.getDouble("price"));
                     order.setStatus(rs.getString("status"));
                     order.setDescription(rs.getString("descr"));
-
                     orderList.add(order);
                 }
 

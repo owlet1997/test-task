@@ -1,4 +1,4 @@
-package com.haulmont.testtask.ui.changes;
+package com.haulmont.testtask.ui.modals;
 
 import com.haulmont.testtask.ui.window.BaseWindow;
 import com.vaadin.ui.Button;

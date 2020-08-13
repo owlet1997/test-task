@@ -15,6 +15,9 @@ public class ClientDAO {
 
     private static ClientDAO clientDAO;
 
+    private ClientDAO(){
+    }
+
     public static ClientDAO getInstance(){
         if (clientDAO == null) {
             clientDAO = new ClientDAO();
@@ -65,8 +68,8 @@ public class ClientDAO {
             while (rs.next()){
                 Client client = new Client();
                 client.setId(rs.getLong("id"));
-                client.setFirstName(rs.getString("first_name"));
-                client.setLastName(rs.getString("last_name"));
+                client.setName(rs.getString("first_name"));
+                client.setSurname(rs.getString("last_name"));
                 client.setFatherName(rs.getString("father_name"));
                 client.setPhone(rs.getString("phone"));
                 clientList.add(client);
@@ -109,8 +112,8 @@ public class ClientDAO {
 
             while (rs.next()){
                 client.setId(rs.getLong("id"));
-                client.setFirstName(rs.getString("first_name"));
-                client.setLastName(rs.getString("last_name"));
+                client.setName(rs.getString("first_name"));
+                client.setSurname(rs.getString("last_name"));
                 client.setFatherName(rs.getString("father_name"));
                 client.setPhone(rs.getString("salary"));
             }

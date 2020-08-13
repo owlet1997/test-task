@@ -1,4 +1,4 @@
-package com.haulmont.testtask.ui.changes;
+package com.haulmont.testtask.ui.modals;
 
 import com.haulmont.testtask.data.DAO.MasterDAO;
 import com.haulmont.testtask.data.DTO.StatisticsDTO;
@@ -11,18 +11,16 @@ import com.vaadin.ui.themes.ValoTheme;
 
 import java.util.List;
 
-import static com.haulmont.testtask.ui.util.Utility.*;
-
-public class ChangeMasterPart extends VerticalLayout implements ChangeInterface{
+public class ChangeMasterModal extends VerticalLayout implements ChangeInterface{
     static RegexpValidator numberValidator = new RegexpValidator("^[0-9]{1,4}$", "Wrong input");
     static RegexpValidator stringValidator = new RegexpValidator("^[А-ЯЁа-яёA-Za-z]{1,20}$", "Wrong input");
 
-    public ChangeMasterPart() {
+    public ChangeMasterModal() {
     }
 
     // добавить мастера
-    public static ChangeMasterPart addMaster(MasterDAO masterDAO, BaseWindow baseWindow){
-        ChangeMasterPart changeMasterPart = new ChangeMasterPart();
+    public static ChangeMasterModal addMaster(MasterDAO masterDAO, BaseWindow baseWindow){
+        ChangeMasterModal changeMasterPart = new ChangeMasterModal();
         HorizontalLayout panel = new HorizontalLayout();
         panel.setCaption("Добавление мастера");
 
@@ -43,8 +41,8 @@ public class ChangeMasterPart extends VerticalLayout implements ChangeInterface{
 
         Button addButton = new Button("Добавить");
         addButton.addClickListener((Button.ClickListener) clickEvent -> {
-            if (checkValidate(nameField.isValid(), surnameField.isValid(),
-                    fNameField.isValid(), salaryField.isValid())){
+            if (nameField.isValid() && surnameField.isValid() &&
+                    fNameField.isValid() && salaryField.isValid()){
                 masterDAO.addMaster(surnameField.getValue(), nameField.getValue(), fNameField.getValue(),Long.parseLong(salaryField.getValue()));
                 Notification.show("Успешно!", "Мастер успешно добавлен!",
                         Notification.TYPE_HUMANIZED_MESSAGE);
@@ -61,8 +59,8 @@ public class ChangeMasterPart extends VerticalLayout implements ChangeInterface{
     }
 
     // delete master
-    public static ChangeMasterPart deleteMaster(MasterDAO masterDAO, BaseWindow baseWindow){
-        ChangeMasterPart changeMasterPart = new ChangeMasterPart();
+    public static ChangeMasterModal deleteMaster(MasterDAO masterDAO, BaseWindow baseWindow){
+        ChangeMasterModal changeMasterPart = new ChangeMasterModal();
 
         HorizontalLayout layout = new HorizontalLayout();
         layout.setCaption("Удалить мастера");
@@ -94,8 +92,8 @@ public class ChangeMasterPart extends VerticalLayout implements ChangeInterface{
     }
 
     // update master
-    public static ChangeMasterPart updateMaster(MasterDAO masterDAO, BaseWindow window){
-        ChangeMasterPart changeMasterPart = new ChangeMasterPart();
+    public static ChangeMasterModal updateMaster(MasterDAO masterDAO, BaseWindow window){
+        ChangeMasterModal changeMasterPart = new ChangeMasterModal();
 
         HorizontalLayout panel = new HorizontalLayout();
         panel.setCaption("Обновить данные о мастере");
@@ -129,17 +127,20 @@ public class ChangeMasterPart extends VerticalLayout implements ChangeInterface{
                 try {
                     Master master = masterDAO.getMaster(numberField.getValue());
                     layout.setVisible(true);
-                    nameField.setValue(master.getFirstName());
-                    surnameField.setValue(master.getLastName());
+                    nameField.setValue(master.getName());
+                    surnameField.setValue(master.getSurname());
                     fNameField.setValue(master.getFatherName());
                     salaryField.setValue(master.getSalary().toString());
                     Button updateButton = new Button("Сохранить изменения");
 
                     layout.addComponent(updateButton);
+                    updateButton.setEnabled(false);
 
                     updateButton.addClickListener((Button.ClickListener) click -> {
-                        if (checkValidate(nameField.isValid(), surnameField.isValid(),
-                                fNameField.isValid(), salaryField.isValid())){
+                        if (nameField.isValid() && surnameField.isValid() &&
+                                fNameField.isValid() && salaryField.isValid()){
+                            updateButton.setEnabled(true);
+
                             masterDAO.updateMaster(master.getId(), nameField.getValue(),
                                     surnameField.getValue(),fNameField.getValue(), salaryField.getValue());
                             window.close();
@@ -162,8 +163,8 @@ public class ChangeMasterPart extends VerticalLayout implements ChangeInterface{
     }
 
     // get statistics
-    public static ChangeMasterPart getStatistics(MasterDAO masterDAO, BaseWindow window){
-        ChangeMasterPart changeMasterPart = new ChangeMasterPart();
+    public static ChangeMasterModal getStatistics(MasterDAO masterDAO, BaseWindow window){
+        ChangeMasterModal changeMasterPart = new ChangeMasterModal();
 
         Grid statisticList = new Grid();
         statisticList.addColumn("Фамилия");

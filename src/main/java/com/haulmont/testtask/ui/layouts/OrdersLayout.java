@@ -1,5 +1,6 @@
 package com.haulmont.testtask.ui.layouts;
 
+import com.haulmont.testtask.MainUI;
 import com.haulmont.testtask.data.DAO.ClientDAO;
 import com.haulmont.testtask.data.DAO.MasterDAO;
 import com.haulmont.testtask.data.DAO.OrderDAO;
@@ -14,9 +15,9 @@ import java.util.stream.Collectors;
 public class OrdersLayout extends VerticalLayout {
 
     public OrdersLayout(){
-        OrderDAO orderDAO = new OrderDAO();
-        MasterDAO masterDAO = new MasterDAO();
-        ClientDAO clientDAO = new ClientDAO();
+        OrderDAO orderDAO = OrderDAO.getInstance();
+        MasterDAO masterDAO = MasterDAO.getInstance();
+        ClientDAO clientDAO = ClientDAO.getInstance();
 
         Grid grid = getList(orderDAO);
         grid.setSizeFull();
@@ -47,7 +48,7 @@ public class OrdersLayout extends VerticalLayout {
 
         sort.addClickListener((Button.ClickListener) clickEvent -> {
             Grid grid1 = getSortedList(orderDAO, descr.getValue(), client.getValue(), status.getValue());
-            refresh(verticalLayout,grid1);
+            refresh();
         });
 
         Button updateButton = new Button("Изменить заказ");
@@ -64,32 +65,24 @@ public class OrdersLayout extends VerticalLayout {
 
         updateButton.addClickListener((Button.ClickListener) clickEvent -> {
             new BaseWindow("Обновить заказ", orderDAO, masterDAO);
-            Grid grid1 = getList(orderDAO);
-            refresh(verticalLayout, grid1);
+            refresh();
         });
 
         addButton.addClickListener((Button.ClickListener) clickEvent -> {
             new BaseWindow("Добавить заказ", orderDAO, masterDAO, clientDAO);
-            Grid grid1 = getList(orderDAO);
-            refresh(verticalLayout, grid1);
+            refresh();
 
         });
 
         deleteButton.addClickListener((Button.ClickListener) clickEvent ->{
             new BaseWindow("Удалить заказ", orderDAO);
-            Grid grid1 = getList(orderDAO);
-            refresh(verticalLayout, grid1);
+           refresh();
         });
 
         addComponent(name);
         addComponent(buttonPanel);
         addComponent(searchPanel);
         addComponent(verticalLayout);
-    }
-
-    private void refresh(VerticalLayout layout, Grid newGrid){
-    layout.removeAllComponents();
-    layout.addComponent(newGrid);
     }
 
     private Grid getList(OrderDAO orderDAO){
@@ -131,6 +124,20 @@ public class OrdersLayout extends VerticalLayout {
         grid.setSizeFull();
         grid.setHeightByRows(20);
         return grid;
+    }
+
+    private void refresh(){
+        TabSheet tabSheet = new TabSheet();
+
+        VerticalLayout ordersLayout = new OrdersLayout();
+        VerticalLayout masterLayout = new MasterLayout();
+        VerticalLayout clientLayout = new ClientsLayout();
+
+        tabSheet.addTab(ordersLayout, "Заказы");
+        tabSheet.addTab(masterLayout, "Мастера");
+        tabSheet.addTab(clientLayout, "Клиенты");
+        UI.getCurrent().setContent(tabSheet);
+
     }
 
 }

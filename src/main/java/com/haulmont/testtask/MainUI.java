@@ -23,8 +23,8 @@ public class MainUI extends UI {
         tabSheet.addTab(ordersLayout, "Заказы");
         tabSheet.addTab(masterLayout, "Мастера");
         tabSheet.addTab(clientLayout, "Клиенты");
-
         UI.getCurrent().setContent(tabSheet);
     }
+
 
 }

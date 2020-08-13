@@ -14,6 +14,17 @@ import java.util.List;
 
 public class MasterDAO {
 
+    private static MasterDAO masterDAO;
+
+    private MasterDAO(){}
+
+    public static MasterDAO getInstance() {
+        if (masterDAO == null){
+            masterDAO = new MasterDAO();
+        }
+        return masterDAO;
+    }
+
     public void addMaster(String fName, String lName, String fatherName, Long salary) {
 
         String sql = "INSERT INTO master (first_name, last_name, father_name, salary) VALUES (?, ?, ?, ?) ";
@@ -57,8 +68,8 @@ public class MasterDAO {
             while (rs.next()){
                 Master master = new Master();
                 master.setId(rs.getLong("id"));
-                master.setFirstName(rs.getString("first_name"));
-                master.setLastName(rs.getString("last_name"));
+                master.setName(rs.getString("first_name"));
+                master.setSurname(rs.getString("last_name"));
                 master.setFatherName(rs.getString("father_name"));
                 master.setSalary(rs.getLong("salary"));
                 masterList.add(master);
@@ -101,8 +112,8 @@ public class MasterDAO {
 
             while (rs.next()){
                 master.setId(rs.getLong("id"));
-                master.setFirstName(rs.getString("first_name"));
-                master.setLastName(rs.getString("last_name"));
+                master.setName(rs.getString("first_name"));
+                master.setSurname(rs.getString("last_name"));
                 master.setFatherName(rs.getString("father_name"));
                 master.setSalary(rs.getLong("salary"));
             }

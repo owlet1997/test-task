@@ -12,7 +12,7 @@ import java.util.List;
 public class MasterLayout extends VerticalLayout {
 
     public MasterLayout(){
-        MasterDAO masterDAO = new MasterDAO();
+        MasterDAO masterDAO = MasterDAO.getInstance();
 
          Label name = new Label("Страница информации о мастерах");
         name.setStyleName(ValoTheme.LABEL_COLORED);
@@ -41,21 +41,18 @@ public class MasterLayout extends VerticalLayout {
 
         updateButton.addClickListener((Button.ClickListener) clickEvent -> {
             new BaseWindow("Обновить данные о мастере", masterDAO, "update");
-            Grid grid1 = getList(masterDAO);
-            refresh(layout, grid1);
+            refresh();
         });
 
         addButton.addClickListener((Button.ClickListener) clickEvent -> {
             new BaseWindow("Добавить мастера", masterDAO, "add");
-            Grid grid1 = getList(masterDAO);
-            refresh(layout, grid1);
+            refresh();
 
         });
 
         deleteButton.addClickListener((Button.ClickListener) clickEvent ->{
             new BaseWindow("Удалить мастера", masterDAO, "delete");
-            Grid grid1 = getList(masterDAO);
-            refresh(layout, grid1);
+            refresh();
         });
 
         statButton.addClickListener((Button.ClickListener) clickEvent -> {
@@ -68,12 +65,6 @@ public class MasterLayout extends VerticalLayout {
         addComponent(layout);
     }
 
-    private void refresh(VerticalLayout layout, Grid newGrid){
-        layout.removeAllComponents();
-        newGrid.setSizeFull();
-        layout.addComponent(newGrid);
-    }
-
     private Grid getList(MasterDAO masterDAO){
         List<Master> masters = masterDAO.getMasterList();
 
@@ -84,9 +75,23 @@ public class MasterLayout extends VerticalLayout {
         grid.addColumn("Отчество");
         grid.addColumn("Часовая ставка");
 
-        masters.forEach(e -> grid.addRow(String.valueOf(e.getId()), e.getLastName(),
-                e.getFirstName(), e.getFatherName(), String.valueOf(e.getSalary())));
+        masters.forEach(e -> grid.addRow(String.valueOf(e.getId()), e.getSurname(),
+                e.getName(), e.getFatherName(), String.valueOf(e.getSalary())));
 
         return grid;
+    }
+
+    private void refresh(){
+        TabSheet tabSheet = new TabSheet();
+
+        VerticalLayout ordersLayout = new OrdersLayout();
+        VerticalLayout masterLayout = new MasterLayout();
+        VerticalLayout clientLayout = new ClientsLayout();
+
+        tabSheet.addTab(masterLayout, "Мастера");
+        tabSheet.addTab(ordersLayout, "Заказы");
+        tabSheet.addTab(clientLayout, "Клиенты");
+        UI.getCurrent().setContent(tabSheet);
+
     }
 }
