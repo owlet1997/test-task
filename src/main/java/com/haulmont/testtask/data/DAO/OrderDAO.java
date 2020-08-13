@@ -11,6 +11,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class OrderDAO {
+    private final String INSERT = "INSERT INTO orders (client, master, create_date, finish_date," +
+            " price, status, descr) VALUES (?, ?, ?, ?, ?, ?, ?) ";
+
+    private final String DELETE = "DELETE  FROM orders WHERE id = ? ";
+
+    private final String SELECT_ALL = "SELECT o.id as id, c.last_name as client_surname, m.last_name as master_surname, o.create_date as date_create, " +
+            "o.finish_date as date_finish, o.price as price, o.status as status, o.descr as descr" +
+            " FROM orders o inner join client c on (o.client=c.id) " +
+            "inner join master m on (o.master=m.id)";
+
+    private final String SELECT_ONE = "SELECT * FROM orders WHERE id = ?";
+
+    private final String UPDATE = "UPDATE orders set descr = ?, price = ?, finish_date = ?, master = ?, status = ? WHERE id = ?";
 
     private static OrderDAO orderDAO;
 
@@ -27,12 +40,10 @@ public class OrderDAO {
     public void addOrder(String client, String master, Date createDate,
                          Date finishDate, String price, String descr) {
 
-        String sql = "INSERT INTO orders (client, master, create_date, finish_date," +
-                " price, status, descr) VALUES (?, ?, ?, ?, ?, ?, ?) ";
         Connection con = DataSourceConfig.getInstance();
 
         try {
-            PreparedStatement ps = con.prepareStatement(sql);
+            PreparedStatement ps = con.prepareStatement(INSERT);
             ps.setLong(1, Long.parseLong(client));
             ps.setLong(2, Long.parseLong(master));
             ps.setDate(3, createDate);
@@ -47,10 +58,10 @@ public class OrderDAO {
     }
 
     public void delOrder(String number) throws WrongGetException {
-        String sql = "DELETE  FROM orders WHERE id = ? ";
+
         Connection con = DataSourceConfig.getInstance();
         try {
-            PreparedStatement ps = con.prepareStatement(sql);
+            PreparedStatement ps = con.prepareStatement(DELETE);
             ps.setInt(1, Integer.parseInt(number));
             ps.execute();
 
@@ -61,15 +72,11 @@ public class OrderDAO {
     }
 
     public List<OrderDTO> getOrderDTOList(){
-        String sql = "SELECT o.id as id, c.last_name as client_surname, m.last_name as master_surname, o.create_date as date_create, " +
-                "o.finish_date as date_finish, o.price as price, o.status as status, o.descr as descr" +
-                " FROM orders o inner join client c on o.client=c.id " +
-                "inner join master m on o.master=m.id";
 
         List<OrderDTO> orderList = new ArrayList<>();
         Connection con = DataSourceConfig.getInstance();
         try {
-            PreparedStatement ps = con.prepareStatement(sql);
+            PreparedStatement ps = con.prepareStatement(SELECT_ALL);
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()){
@@ -92,11 +99,11 @@ public class OrderDAO {
     }
 
     public Order getOrder(String id) {
-        String sql = "SELECT * FROM orders WHERE id = ?";
+
         Connection con = DataSourceConfig.getInstance();
         Order order = new Order();
         try{
-            PreparedStatement ps = con.prepareStatement(sql);
+            PreparedStatement ps = con.prepareStatement(SELECT_ONE);
             ps.setLong(1, Long.parseLong(id));
             ResultSet rs = ps.executeQuery();
 
@@ -117,10 +124,10 @@ public class OrderDAO {
     }
 
     public void updateOrder(Long id, String description, String price, Date finishDate, Long masterId, String status){
-        String sql = "UPDATE orders set descr = ?, price = ?, finish_date = ?, master = ?, status = ? WHERE id = ?";
+
         Connection con = DataSourceConfig.getInstance();
         try{
-            PreparedStatement ps = con.prepareStatement(sql);
+            PreparedStatement ps = con.prepareStatement(UPDATE);
             ps.setString(1, description);
             ps.setDouble(2, Double.parseDouble(price));
             ps.setDate(3, finishDate);

@@ -12,6 +12,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ClientDAO {
+    private final String INSERT = "INSERT INTO client (first_name, last_name, father_name, phone) VALUES (?, ?, ?, ?) ";
+
+    private final String DELETE = "DELETE  FROM client WHERE id = ? ";
+
+    private final String SELECT_ALL = "SELECT * FROM client";
+
+    private final String SELECT_ONE = "SELECT * FROM client WHERE id = ?";
+
+    private final String UPDATE = "UPDATE client SET first_name = ?, last_name = ?, fatherName = ?, phone = ? WHERE id = ?";
+
 
     private static ClientDAO clientDAO;
 
@@ -27,11 +37,10 @@ public class ClientDAO {
 
     public void addClient(String fName, String lName, String fatherName, String phone) {
 
-        String sql = "INSERT INTO client (first_name, last_name, father_name, phone) VALUES (?, ?, ?, ?) ";
         if (fatherName == null) fatherName = "";
         Connection con = DataSourceConfig.getInstance();
         try {
-            PreparedStatement ps = con.prepareStatement(sql);
+            PreparedStatement ps = con.prepareStatement(INSERT);
             ps.setString(1, fName);
             ps.setString(2, lName);
             ps.setString(3, fatherName);
@@ -44,10 +53,9 @@ public class ClientDAO {
     }
 
     public void delClient(String number) throws WrongGetException {
-        String sql = "DELETE  FROM client WHERE id = ? ";
         Connection con = DataSourceConfig.getInstance();
         try {
-            PreparedStatement ps = con.prepareStatement(sql);
+            PreparedStatement ps = con.prepareStatement(DELETE);
             ps.setInt(1, Integer.valueOf(number));
             ps.execute();
 
@@ -58,11 +66,10 @@ public class ClientDAO {
     }
 
     public List<Client> getClientList(){
-        String sql = "SELECT * FROM client";
         List<Client> clientList = new ArrayList<>();
         Connection con = DataSourceConfig.getInstance();
         try {
-            PreparedStatement ps = con.prepareStatement(sql);
+            PreparedStatement ps = con.prepareStatement(SELECT_ALL);
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()){
@@ -82,10 +89,9 @@ public class ClientDAO {
     }
 
      public void updateClient(Long id, String fName, String lName, String fatherName, String phone){
-        String sql = "UPDATE client SET first_name = ?, last_name = ?, fatherName = ?, phone = ? WHERE id = ?";
         Connection con = DataSourceConfig.getInstance();
         try {
-            PreparedStatement ps = con.prepareStatement(sql);
+            PreparedStatement ps = con.prepareStatement(UPDATE);
             ps.setString(1, fName);
             ps.setString(2, lName);
             ps.setString(3, fatherName);
@@ -99,14 +105,13 @@ public class ClientDAO {
     }
 
     public Client getClient(String id) throws WrongGetException {
-        String sql = "SELECT * FROM client WHERE id = ? ";
         Long clientId = Long.parseLong(id);
 
         Client client = new Client();
 
         Connection con = DataSourceConfig.getInstance();
         try {
-            PreparedStatement ps = con.prepareStatement(sql);
+            PreparedStatement ps = con.prepareStatement(SELECT_ONE);
             ps.setLong(1, clientId);
             ResultSet rs = ps.executeQuery();
 

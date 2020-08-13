@@ -14,6 +14,18 @@ import java.util.List;
 
 public class MasterDAO {
 
+    private final String INSERT = "INSERT INTO master (first_name, last_name, father_name, salary) VALUES (?, ?, ?, ?) ";
+
+    private final String DELETE = "DELETE  FROM master WHERE id = ? ";
+
+    private final String SELECT_ALL = "SELECT * FROM master";
+
+    private final String SELECT_ONE = "SELECT * FROM master WHERE id = ? ";
+    private final String SELECT_STAT =  "SELECT m.first_name, m.last_name, m.father_name, " +
+            "count(m.id) as amount FROM master m INNER JOIN orders o on (m.id=o.master) group by m.id";
+
+    private final String UPDATE = "UPDATE master SET first_name = ?, last_name = ?, father_name = ?, salary = ? WHERE id = ?";
+
     private static MasterDAO masterDAO;
 
     private MasterDAO(){}
@@ -27,10 +39,9 @@ public class MasterDAO {
 
     public void addMaster(String fName, String lName, String fatherName, Long salary) {
 
-        String sql = "INSERT INTO master (first_name, last_name, father_name, salary) VALUES (?, ?, ?, ?) ";
         Connection con = DataSourceConfig.getInstance();
         try {
-            PreparedStatement ps = con.prepareStatement(sql);
+            PreparedStatement ps = con.prepareStatement(INSERT);
             ps.setString(1, fName);
             ps.setString(2, lName);
             ps.setString(3, fatherName);
@@ -43,10 +54,9 @@ public class MasterDAO {
     }
 
     public void delMaster(String number) throws WrongGetException {
-        String sql = "DELETE  FROM master WHERE id = ? ";
         Connection con = DataSourceConfig.getInstance();
         try {
-            PreparedStatement ps = con.prepareStatement(sql);
+            PreparedStatement ps = con.prepareStatement(DELETE);
             ps.setInt(1, Integer.parseInt(number));
             ps.execute();
 
@@ -58,11 +68,10 @@ public class MasterDAO {
     }
 
     public List<Master> getMasterList(){
-        String sql = "SELECT * FROM master";
         List<Master> masterList = new ArrayList<>();
         Connection con = DataSourceConfig.getInstance();
         try {
-            PreparedStatement ps = con.prepareStatement(sql);
+            PreparedStatement ps = con.prepareStatement(SELECT_ALL);
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()){
@@ -82,10 +91,10 @@ public class MasterDAO {
     }
 
     public void updateMaster(Long id, String fName, String lName, String fatherName, String salary){
-        String sql = "UPDATE master SET first_name = ?, last_name = ?, father_name = ?, salary = ? WHERE id = ?";
+
         Connection con = DataSourceConfig.getInstance();
         try {
-            PreparedStatement ps = con.prepareStatement(sql);
+            PreparedStatement ps = con.prepareStatement(UPDATE);
             ps.setString(1, fName);
             ps.setString(2, lName);
             ps.setString(3, fatherName);
@@ -99,14 +108,13 @@ public class MasterDAO {
     }
 
     public Master getMaster(String id) throws WrongGetException {
-        String sql = "SELECT * FROM master WHERE id = ? ";
         long masterId = Long.parseLong(id);
 
         Master master = new Master();
 
         Connection con = DataSourceConfig.getInstance();
         try {
-            PreparedStatement ps = con.prepareStatement(sql);
+            PreparedStatement ps = con.prepareStatement(SELECT_ONE);
             ps.setLong(1, masterId);
             ResultSet rs = ps.executeQuery();
 
@@ -125,13 +133,11 @@ public class MasterDAO {
     }
 
     public List<StatisticsDTO> getStatistics(){
-        String sql = "SELECT m.first_name, m.last_name, m.father_name, count(m.id) as amount FROM master m INNER JOIN orders o on (m.id=o.master) group by m.id";
-
-        Connection con = DataSourceConfig.getInstance();
+       Connection con = DataSourceConfig.getInstance();
 
         List<StatisticsDTO> list = new ArrayList<>();
         try {
-            PreparedStatement ps = con.prepareStatement(sql);
+            PreparedStatement ps = con.prepareStatement(SELECT_STAT);
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()){
