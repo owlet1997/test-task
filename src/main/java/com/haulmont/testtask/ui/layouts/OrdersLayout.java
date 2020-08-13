@@ -10,6 +10,7 @@ import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class OrdersLayout extends VerticalLayout {
@@ -47,8 +48,9 @@ public class OrdersLayout extends VerticalLayout {
         searchPanel.addComponent(sort);
 
         sort.addClickListener((Button.ClickListener) clickEvent -> {
-            Grid grid1 = getSortedList(orderDAO, descr.getValue(), client.getValue(), status.getValue());
-            refresh();
+            refresh(this, getSortedList(orderDAO, Optional.of(descr.getValue()),
+                    Optional.of(client.getValue()), Optional.of(status.getValue())),
+                    buttonPanel, searchPanel, name);
         });
 
         Button updateButton = new Button("Изменить заказ");
@@ -91,18 +93,13 @@ public class OrdersLayout extends VerticalLayout {
         return getComponents(orderList);
     }
 
-    private Grid getSortedList(OrderDAO orderDAO, String descr, String client, String status){
-        if (descr==null) descr = "";
-        if (client==null) client = "";
-        if (status==null) status = "";
+    private Grid getSortedList(OrderDAO orderDAO, Optional<String> descr, Optional<String> client, Optional<String> status){
+
         List<OrderDTO> orderList = orderDAO.getOrderDTOList();
 
-        String finalClient = client;
-        String finalDescr = descr;
-        String finalStatus = status;
-        List<OrderDTO> sortedList = orderList.stream().filter(e -> e.getClientSurname().contains(finalClient))
-                                                      .filter(e -> e.getDescription().contains(finalDescr))
-                                                      .filter(e -> e.getStatus().contains(finalStatus))
+        List<OrderDTO> sortedList = orderList.stream().filter(e -> e.getClientSurname().contains(client.orElse("")))
+                                                      .filter(e -> e.getDescription().contains(descr.orElse("")))
+                                                      .filter(e -> e.getStatus().contains(status.orElse("")))
                                                       .collect(Collectors.toList());
         return getComponents(sortedList);
     }
@@ -138,6 +135,16 @@ public class OrdersLayout extends VerticalLayout {
         tabSheet.addTab(clientLayout, "Клиенты");
         UI.getCurrent().setContent(tabSheet);
 
+    }
+
+
+    private void refresh(VerticalLayout layout, Grid grid, HorizontalLayout buttonPanel, HorizontalLayout searchPanel, Label label){
+        layout.removeAllComponents();
+        layout.addComponent(label);
+        grid.setSizeFull();
+        layout.addComponent(buttonPanel);
+        layout.addComponent(searchPanel);
+        layout.addComponent(grid);
     }
 
 }

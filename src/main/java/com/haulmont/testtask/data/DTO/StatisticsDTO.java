@@ -2,9 +2,9 @@ package com.haulmont.testtask.data.DTO;
 
 public class StatisticsDTO {
     String name;
-    String lastName;
+    String surname;
     String fatherName;
-    int countAll;
+    int amount;
 
     public String getName() {
         return name;
@@ -14,12 +14,12 @@ public class StatisticsDTO {
         this.name = name;
     }
 
-    public String getLastName() {
-        return lastName;
+    public String getSurname() {
+        return surname;
     }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public void setSurname(String surname) {
+        this.surname = surname;
     }
 
     public String getFatherName() {
@@ -30,12 +30,12 @@ public class StatisticsDTO {
         this.fatherName = fatherName;
     }
 
-    public int getCountAll() {
-        return countAll;
+    public int getAmount() {
+        return amount;
     }
 
-    public void setCountAll(int countAll) {
-        this.countAll = countAll;
+    public void setAmount(int amount) {
+        this.amount = amount;
     }
 
 

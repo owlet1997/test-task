@@ -143,9 +143,9 @@ public class MasterDAO {
             while (rs.next()){
                 StatisticsDTO statisticsDTO = new StatisticsDTO();
                 statisticsDTO.setName(rs.getString("first_name"));
-                statisticsDTO.setLastName(rs.getString("last_name"));
+                statisticsDTO.setSurname(rs.getString("last_name"));
                 statisticsDTO.setFatherName(rs.getString("father_name"));
-                statisticsDTO.setCountAll(rs.getInt("amount"));
+                statisticsDTO.setAmount(rs.getInt("amount"));
                 list.add(statisticsDTO);
             }
         } catch (SQLException e) {

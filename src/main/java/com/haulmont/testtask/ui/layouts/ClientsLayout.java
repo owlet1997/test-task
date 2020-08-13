@@ -35,20 +35,13 @@ public class ClientsLayout extends VerticalLayout {
         Grid grid = getList(clientDAO);
         grid.setSizeFull();
 
-        updateButton.addClickListener((Button.ClickListener) clickEvent -> {
-            new BaseWindow("Обновить клиента",clientDAO, "update");
-            refresh();
-        });
+
 
         addButton.addClickListener((Button.ClickListener) clickEvent -> {
-            new BaseWindow("Добавить клиента", clientDAO, "add");
+            new BaseWindow("Добавить клиента", clientDAO);
             refresh();
         });
 
-        deleteButton.addClickListener((Button.ClickListener) clickEvent ->{
-            new BaseWindow("Удалить клиента", clientDAO, "delete");
-            refresh();
-        });
 
         addComponent(name);
         addComponent(buttonPanel);
@@ -64,9 +57,19 @@ public class ClientsLayout extends VerticalLayout {
         grid.addColumn("Имя");
         grid.addColumn("Отчество");
         grid.addColumn("Телефон");
+        grid.addColumn("Обновить");
+        grid.addColumn("Удалить");
 
-        clients.forEach(e -> grid.addRow(String.valueOf(e.getId()), e.getSurname(),
-                e.getName(), e.getFatherName(), e.getPhone()));
+        clients.forEach(e -> {
+            Button updateButton = new Button("Обновить");
+            Button deleteButton = new Button("Удалить");
+            grid.addRow(String.valueOf(e.getId()), e.getSurname(),
+                    e.getName(), e.getFatherName(), e.getPhone(), updateButton, deleteButton);
+            updateButton.addClickListener((Button.ClickListener) clickEvent ->{
+                new BaseWindow("Обновить клиента",clientDAO,e, "update");
+                refresh();
+            });
+        });
 
         grid.setHeightByRows(clients.size());
         return grid;

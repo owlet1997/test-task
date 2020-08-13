@@ -18,6 +18,8 @@ public class ChangeClientModal extends VerticalLayout implements ChangeInterface
     public static ChangeClientModal addClient(ClientDAO clientDAO, BaseWindow baseWindow){
         ChangeClientModal changeClientPart = new ChangeClientModal();
         HorizontalLayout panel = new HorizontalLayout();
+        HorizontalLayout buttonPanel = new HorizontalLayout();
+        buttonPanel.setDefaultComponentAlignment(Alignment.TOP_CENTER);
 
         TextField nameField = new TextField("Имя");
         TextField surnameField = new TextField("Фамилия");
@@ -35,73 +37,66 @@ public class ChangeClientModal extends VerticalLayout implements ChangeInterface
         panel.addComponent(surnameField);
         panel.addComponent(fNameField);
         panel.addComponent(phoneField);
-        panel.addComponent(addButton);
-        addButton.setEnabled(false);
 
         addButton.addClickListener((Button.ClickListener) clickEvent -> {
             if (nameField.isValid() && surnameField.isValid() &&
                     fNameField.isValid() && phoneField.isValid()){
-                addButton.setEnabled(true);
                 clientDAO.addClient(nameField.getValue(),surnameField.getValue(), fNameField.getValue(),phoneField.getValue());
-
                 baseWindow.close();
             }
         });
 
         Button closeButton = ChangeInterface.cancelButton(baseWindow);
+        buttonPanel.addComponent(addButton);
+        buttonPanel.addComponent(closeButton);
 
         changeClientPart.addComponent(panel);
-        changeClientPart.addComponent(closeButton);
+        changeClientPart.addComponent(buttonPanel);
         return changeClientPart;
     }
 
     // delete client
-    public static ChangeClientModal deleteClient(ClientDAO clientDAO, BaseWindow baseWindow){
+    public static ChangeClientModal deleteClient(ClientDAO clientDAO, Client client, BaseWindow baseWindow){
         ChangeClientModal changeClientPart = new ChangeClientModal();
+
+        VerticalLayout modal = new VerticalLayout();
 
         HorizontalLayout layout = new HorizontalLayout();
         layout.setCaption("Удалить клиента");
 
-        TextField numberField = new TextField("Введите код клиента");
-        numberField.addValidator(numberValidator);
+        Label label = new Label("Вы действительно хотит удалить клиента "
+                + client.getSurname() + " " + client.getName() + "?");
 
-        Button deleteButton = new Button("Удалить");
+        Button deleteButton = new Button("Да");
         deleteButton.addClickListener((Button.ClickListener) clickEvent -> {
             try{
-                if (numberField.isValid()){
-                    clientDAO.delClient(numberField.getValue());
-                    baseWindow.close();
-                }
+                clientDAO.delClient(String.valueOf(client.getId()));
+                baseWindow.close();
+
             } catch (WrongGetException e){
                 Notification.show("Ошибка удаления", "Нельзя удалить клиента с этим номером!",
                         Notification.Type.WARNING_MESSAGE);
-                numberField.clear();
+                baseWindow.close();
             }
         });
         Button closeButton = ChangeInterface.cancelButton(baseWindow);
-        layout.addComponent(numberField);
         layout.addComponent(deleteButton);
         layout.addComponent(closeButton);
+        modal.addComponent(label);
+        modal.addComponent(layout);
 
-        changeClientPart.addComponent(layout);
+        changeClientPart.addComponent(modal);
         return changeClientPart;
     }
 
     // update client
-    public static ChangeClientModal updateClient(ClientDAO clientDAO, BaseWindow window){
+    public static ChangeClientModal updateClient(ClientDAO clientDAO, Client client, BaseWindow window){
          ChangeClientModal changeClientPart = new ChangeClientModal();
 
         HorizontalLayout panel = new HorizontalLayout();
         panel.setCaption("Обновить данные о клиенте");
 
         HorizontalLayout layout = new HorizontalLayout();
-
-        TextField numberField = new TextField("Введите код клиента");
-        numberField.addValidator(numberValidator);
-        Button numberButton = new Button("Изменить данные клиента");
-
-        panel.addComponent(numberField);
-        panel.addComponent(numberButton);
 
         TextField nameField = new TextField("Имя");
         TextField surnameField = new TextField("Фамилия");
@@ -117,33 +112,20 @@ public class ChangeClientModal extends VerticalLayout implements ChangeInterface
         layout.addComponent(fNameField);
         layout.addComponent(phoneField);
 
-        numberButton.addClickListener((Button.ClickListener) clickEvent-> {
-            if (numberField.isValid()){
-                try{
-                    Client client = clientDAO.getClient(numberField.getValue());
-                    layout.setVisible(true);
-                    nameField.setValue(client.getName());
-                    surnameField.setValue(client.getSurname());
-                    fNameField.setValue(client.getFatherName());
-                    phoneField.setValue(client.getPhone());
-                    Button updateButton = new Button("Сохранить изменения");
+        nameField.setValue(client.getName());
+        surnameField.setValue(client.getSurname());
+        fNameField.setValue(client.getFatherName());
+        phoneField.setValue(client.getPhone());
 
-                    layout.addComponent(updateButton);
+        Button updateButton = new Button("Сохранить изменения");
+        layout.addComponent(updateButton);
 
-                    updateButton.addClickListener((Button.ClickListener) click -> {
-                        if (nameField.isValid() && surnameField.isValid() &&
-                                fNameField.isValid() && phoneField.isValid()){
-                            clientDAO.updateClient(client.getId(), nameField.getValue(),
-                                    surnameField.getValue(),fNameField.getValue(), phoneField.getValue());
-                            window.close();
-                        }
-                    });
-                } catch (WrongGetException e){
-                    Notification.show("Ошибка обновления", e.getMessage(),
-                            Notification.Type.WARNING_MESSAGE);
-                    numberField.clear();
-                }
-
+        updateButton.addClickListener((Button.ClickListener) click -> {
+            if (nameField.isValid() && surnameField.isValid() &&
+                    fNameField.isValid() && phoneField.isValid()){
+                clientDAO.updateClient(client.getId(), nameField.getValue(),
+                        surnameField.getValue(),fNameField.getValue(), phoneField.getValue());
+                window.close();
             }
         });
 

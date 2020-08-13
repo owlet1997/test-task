@@ -8,8 +8,12 @@ import com.haulmont.testtask.ui.window.BaseWindow;
 import com.vaadin.data.validator.RegexpValidator;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
+import org.dussan.vaadin.dcharts.data.DataSeries;
+import org.dussan.vaadin.dcharts.metadata.renderers.SeriesRenderers;
+import org.dussan.vaadin.dcharts.options.SeriesDefaults;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ChangeMasterModal extends VerticalLayout implements ChangeInterface{
     static RegexpValidator numberValidator = new RegexpValidator("^[0-9]{1,4}$", "Wrong input");
@@ -77,7 +81,7 @@ public class ChangeMasterModal extends VerticalLayout implements ChangeInterface
                 }
             } catch (WrongGetException e){
                 Notification.show("Ошибка удаления", "Нельзя удалить мастера с этим номером!",
-                        Notification.TYPE_HUMANIZED_MESSAGE);
+                        Notification.Type.WARNING_MESSAGE);
                 numberField.clear();
             }
         });
@@ -148,7 +152,7 @@ public class ChangeMasterModal extends VerticalLayout implements ChangeInterface
                     });
                 } catch (WrongGetException e){
                     Notification.show("Ошибка удаления", "Нельзя удалить мастера с этим номером!",
-                            Notification.TYPE_HUMANIZED_MESSAGE);
+                            Notification.Type.WARNING_MESSAGE);
                     numberField.clear();
                 }
             }
@@ -173,9 +177,17 @@ public class ChangeMasterModal extends VerticalLayout implements ChangeInterface
         statisticList.addColumn("Количество заказов");
         statisticList.setSizeFull();
 
-        List<StatisticsDTO> list = masterDAO.getStatistics();
 
-        list.forEach(e -> statisticList.addRow(e.getLastName(), e.getName(), e.getFatherName(), String.valueOf(e.getCountAll())));
+
+
+        List<StatisticsDTO> list = masterDAO.getStatistics();
+        DataSeries dataSeries = new DataSeries()
+                .add(list.stream().map(StatisticsDTO::getAmount).collect(Collectors.toList()));
+
+        SeriesDefaults seriesDefaults = new SeriesDefaults()
+                .setRenderer(SeriesRenderers.BAR);
+
+        list.forEach(e -> statisticList.addRow(e.getSurname(), e.getName(), e.getFatherName(), String.valueOf(e.getAmount())));
 
         statisticList.setHeightByRows(list.size());
 

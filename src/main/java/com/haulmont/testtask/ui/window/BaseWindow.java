@@ -3,6 +3,7 @@ package com.haulmont.testtask.ui.window;
 import com.haulmont.testtask.data.DAO.ClientDAO;
 import com.haulmont.testtask.data.DAO.MasterDAO;
 import com.haulmont.testtask.data.DAO.OrderDAO;
+import com.haulmont.testtask.data.entities.Client;
 import com.haulmont.testtask.ui.modals.ChangeInterface;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.UI;
@@ -14,18 +15,18 @@ import static com.haulmont.testtask.ui.modals.ChangeOrderModal.*;
 
 public class BaseWindow extends Window {
 
-    public BaseWindow(String caption, ClientDAO dao, String flag) {
+    public BaseWindow(String caption, ClientDAO dao, Client client, String flag) {
         switch (flag){
             case "update":
-                getWindow(caption, updateClient(dao, this));
-                break;
-            case "add":
-                getWindow(caption,  addClient(dao, this));
+                getWindow(caption, updateClient(dao, client,this));
                 break;
             case "delete":
-                getWindow(caption, deleteClient(dao, this));
+                getWindow(caption, deleteClient(dao, client,this));
                 break;
         }
+    }
+    public BaseWindow(String caption,  ClientDAO dao){
+        getWindow(caption,  addClient(dao, this));
     }
 
     public BaseWindow(String caption, MasterDAO dao, String flag){
