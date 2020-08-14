@@ -1,22 +1,34 @@
 package com.haulmont.testtask.data.entities;
 
+import javax.persistence.*;
 import java.sql.Date;
 
+@Entity
 public class Order {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column
     private String description;
 
-    private long client;
+    @Column
+    private Client client;
 
-    private long master;
+    @Column
+    private Master master;
 
+    @Column
     private Date createDate;
 
+    @Column
     private Date finishDate;
 
+    @Column
     private Double price;
 
+    @Column
     private String status;
 
     public Long getId() {
@@ -35,19 +47,19 @@ public class Order {
         this.description = description;
     }
 
-    public long getClient() {
+    public Client getClient() {
         return client;
     }
 
-    public void setClient(long client) {
+    public void setClient(Client client) {
         this.client = client;
     }
 
-    public long getMaster() {
+    public Master getMaster() {
         return master;
     }
 
-    public void setMaster(long master) {
+    public void setMaster(Master master) {
         this.master = master;
     }
 

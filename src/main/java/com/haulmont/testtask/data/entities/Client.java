@@ -1,18 +1,25 @@
 package com.haulmont.testtask.data.entities;
 
+import javax.persistence.*;
 import java.io.Serializable;
 
-
+@Entity
 public class Client implements Serializable {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column
     private String name;
 
+    @Column
     private String surname;
 
+    @Column
     private String fatherName;
 
+    @Column
     private String phone;
 
     public Long getId() {

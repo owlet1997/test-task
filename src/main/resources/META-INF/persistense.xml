@@ -1,0 +1,6 @@
+<persistence-unit name="com.haulmont.testtask">
+    <properties>
+        <property name="hibernate.hbm2ddl.auto" value="update"/>
+        <property name="hibernate.connection.url" value="jdbc:hsqldb:file:/home/owlet/file"/>
+    </properties>
+</persistence-unit>

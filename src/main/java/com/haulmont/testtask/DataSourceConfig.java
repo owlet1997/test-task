@@ -1,5 +1,8 @@
 package com.haulmont.testtask;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.swing.text.html.parser.Entity;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -7,6 +10,8 @@ import java.sql.SQLException;
 public class DataSourceConfig {
 
     private static Connection instance;
+
+    private static EntityManagerFactory entityManagerFactory;
 
     public static synchronized Connection getInstance() {
         if (instance == null) {
@@ -17,6 +22,7 @@ public class DataSourceConfig {
                 e.printStackTrace();
             }
         }
+        EntityManager manager = entityManagerFactory.createEntityManager();
         return instance;
     }
 }

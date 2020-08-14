@@ -1,14 +1,24 @@
 package com.haulmont.testtask.data.entities;
 
+import javax.persistence.*;
+
+@Entity
 public class Master {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column
     private String name;
 
+    @Column
     private String surname;
 
+    @Column
     private String fatherName;
 
+    @Column
     private Long salary;
 
     public Long getId() {
