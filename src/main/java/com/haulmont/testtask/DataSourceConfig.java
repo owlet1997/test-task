@@ -2,27 +2,19 @@ package com.haulmont.testtask;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.swing.text.html.parser.Entity;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import javax.persistence.Persistence;
 
 public class DataSourceConfig {
 
-    private static Connection instance;
+    private static final EntityManagerFactory entityManagerFactory =
+            Persistence.createEntityManagerFactory("testtask");
 
-    private static EntityManagerFactory entityManagerFactory;
+    public static EntityManager entityManager;
 
-    public static synchronized Connection getInstance() {
-        if (instance == null) {
-            try {
-                Class.forName("org.hsqldb.jdbcDriver");
-                instance = DriverManager.getConnection("jdbc:hsqldb:file:/home/owlet/file", "SA", "1234");
-            } catch (SQLException | ClassNotFoundException e) {
-                e.printStackTrace();
-            }
+    public static synchronized EntityManager getInstance() {
+        if (entityManager == null) {
+                entityManager = entityManagerFactory.createEntityManager();
         }
-        EntityManager manager = entityManagerFactory.createEntityManager();
-        return instance;
+        return entityManager;
     }
 }

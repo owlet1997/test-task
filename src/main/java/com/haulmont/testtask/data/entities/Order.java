@@ -2,6 +2,7 @@ package com.haulmont.testtask.data.entities;
 
 import javax.persistence.*;
 import java.sql.Date;
+import java.util.Collection;
 
 @Entity
 public class Order {
@@ -13,10 +14,12 @@ public class Order {
     @Column
     private String description;
 
-    @Column
+    @JoinColumn
+    @ManyToOne(targetEntity = Client.class)
     private Client client;
 
-    @Column
+    @JoinColumn
+    @ManyToOne(targetEntity = Master.class)
     private Master master;
 
     @Column
@@ -94,4 +97,5 @@ public class Order {
     public void setStatus(String status) {
         this.status = status;
     }
+
 }

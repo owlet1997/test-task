@@ -5,6 +5,8 @@ import com.haulmont.testtask.DataSourceConfig;
 import com.haulmont.testtask.data.entities.Master;
 import com.haulmont.testtask.data.exception.WrongGetException;
 
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -13,18 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MasterDAO {
-
-    private final String INSERT = "INSERT INTO master (first_name, last_name, father_name, salary) VALUES (?, ?, ?, ?) ";
-
-    private final String DELETE = "DELETE  FROM master WHERE id = ? ";
-
-    private final String SELECT_ALL = "SELECT * FROM master";
-
-    private final String SELECT_ONE = "SELECT * FROM master WHERE id = ? ";
-    private final String SELECT_STAT =  "SELECT m.first_name, m.last_name, m.father_name, " +
-            "count(m.id) as amount FROM master m INNER JOIN orders o on (m.id=o.master) group by m.id";
-
-    private final String UPDATE = "UPDATE master SET first_name = ?, last_name = ?, father_name = ?, salary = ? WHERE id = ?";
 
     private static MasterDAO masterDAO;
 
@@ -37,120 +27,87 @@ public class MasterDAO {
         return masterDAO;
     }
 
-    public void addMaster(String fName, String lName, String fatherName, Long salary) {
+    public void addMaster(String name, String surname, String fatherName, Long salary) {
 
-        Connection con = DataSourceConfig.getInstance();
-        try {
-            PreparedStatement ps = con.prepareStatement(INSERT);
-            ps.setString(1, fName);
-            ps.setString(2, lName);
-            ps.setString(3, fatherName);
-            ps.setLong(4, salary);
-            ps.execute();
+        EntityManager manager = DataSourceConfig.getInstance();
+        manager.getTransaction().begin();
 
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        Master master = new Master();
+        master.setName(name);
+        master.setSurname(surname);
+        master.setFatherName(fatherName);
+        master.setSalary(salary);
+
+        manager.persist(master);
+        manager.getTransaction().commit();
+        manager.close();
     }
 
     public void delMaster(String number) throws WrongGetException {
-        Connection con = DataSourceConfig.getInstance();
-        try {
-            PreparedStatement ps = con.prepareStatement(DELETE);
-            ps.setInt(1, Integer.parseInt(number));
-            ps.execute();
 
-        } catch (SQLException e) {
-            e.printStackTrace();
+        EntityManager manager = DataSourceConfig.getInstance();
+        manager.getTransaction().begin();
+
+        Master master = manager.find(Master.class, Integer.parseInt(number));
+
+        if (master==null){
             throw new WrongGetException("Нельзя удалить данного мастера!");
-
         }
+        manager.remove(master);
+
+        manager.getTransaction().commit();
+        manager.close();
     }
 
     public List<Master> getMasterList(){
-        List<Master> masterList = new ArrayList<>();
-        Connection con = DataSourceConfig.getInstance();
-        try {
-            PreparedStatement ps = con.prepareStatement(SELECT_ALL);
-            ResultSet rs = ps.executeQuery();
+        EntityManager manager = DataSourceConfig.getInstance();
+        manager.getTransaction().begin();
 
-            while (rs.next()){
-                Master master = new Master();
-                master.setId(rs.getLong("id"));
-                master.setName(rs.getString("first_name"));
-                master.setSurname(rs.getString("last_name"));
-                master.setFatherName(rs.getString("father_name"));
-                master.setSalary(rs.getLong("salary"));
-                masterList.add(master);
-            }
+        Query query = manager.createQuery("SELECT * from master e");
 
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        List<Master> masterList = query.getResultList();
+        manager.close();
+
         return masterList;
     }
 
     public void updateMaster(Long id, String fName, String lName, String fatherName, String salary){
+        EntityManager manager = DataSourceConfig.getInstance();
+        manager.getTransaction().begin();
 
-        Connection con = DataSourceConfig.getInstance();
-        try {
-            PreparedStatement ps = con.prepareStatement(UPDATE);
-            ps.setString(1, fName);
-            ps.setString(2, lName);
-            ps.setString(3, fatherName);
-            ps.setLong(4, Long.parseLong(salary));
-            ps.setLong(5, id);
-            ps.execute();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        Master master = manager.find(Master.class, id);
+        master.setName(fName);
+        master.setSurname(lName);
+        master.setFatherName(fatherName);
+        master.setSalary(Long.parseLong(salary));
+
+        manager.getTransaction().commit();
+        manager.close();
 
     }
 
     public Master getMaster(String id) throws WrongGetException {
-        long masterId = Long.parseLong(id);
+        EntityManager manager = DataSourceConfig.getInstance();
+        manager.getTransaction().begin();
 
-        Master master = new Master();
-
-        Connection con = DataSourceConfig.getInstance();
-        try {
-            PreparedStatement ps = con.prepareStatement(SELECT_ONE);
-            ps.setLong(1, masterId);
-            ResultSet rs = ps.executeQuery();
-
-            while (rs.next()){
-                master.setId(rs.getLong("id"));
-                master.setName(rs.getString("first_name"));
-                master.setSurname(rs.getString("last_name"));
-                master.setFatherName(rs.getString("father_name"));
-                master.setSalary(rs.getLong("salary"));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw new WrongGetException("Нет мастера с таким кодом!");
+        Master master = manager.find(Master.class, Long.parseLong(id));
+        if (master==null){
+            throw new WrongGetException("Нет мастера с таким номером!");
         }
+        manager.close();
         return master;
     }
 
     public List<StatisticsDTO> getStatistics(){
-       Connection con = DataSourceConfig.getInstance();
+        List<StatisticsDTO> dtoList = new ArrayList<>();
+        EntityManager manager = DataSourceConfig.getInstance();
+        manager.getTransaction().begin();
 
-        List<StatisticsDTO> list = new ArrayList<>();
-        try {
-            PreparedStatement ps = con.prepareStatement(SELECT_STAT);
-            ResultSet rs = ps.executeQuery();
+        Query query = manager.createQuery("SELECT NEW com.haulmont.testtask.data.DTO.StatisticsDTO(m.first_name, m.last_name, m.father_name, count(m.id) as amount) FROM master m INNER JOIN orders o where m.id=o.master group by m.id");
 
-            while (rs.next()){
-                StatisticsDTO statisticsDTO = new StatisticsDTO();
-                statisticsDTO.setName(rs.getString("first_name"));
-                statisticsDTO.setSurname(rs.getString("last_name"));
-                statisticsDTO.setFatherName(rs.getString("father_name"));
-                statisticsDTO.setAmount(rs.getInt("amount"));
-                list.add(statisticsDTO);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        List<StatisticsDTO> list = query.getResultList();
+        manager.close();
+
         return list;
     }
 }

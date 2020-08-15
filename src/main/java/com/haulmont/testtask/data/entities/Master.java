@@ -1,6 +1,7 @@
 package com.haulmont.testtask.data.entities;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 public class Master {
@@ -20,6 +21,10 @@ public class Master {
 
     @Column
     private Long salary;
+
+    @JoinColumn
+    @OneToMany(targetEntity = Order.class)
+    private Set orders;
 
     public Long getId() {
         return id;
@@ -59,5 +64,13 @@ public class Master {
 
     public void setSalary(Long salary) {
         this.salary = salary;
+    }
+
+    public Set getOrders() {
+        return orders;
+    }
+
+    public void setOrders(Set orders) {
+        this.orders = orders;
     }
 }

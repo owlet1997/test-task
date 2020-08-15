@@ -2,6 +2,8 @@ package com.haulmont.testtask.data.entities;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 public class Client implements Serializable {
@@ -21,6 +23,10 @@ public class Client implements Serializable {
 
     @Column
     private String phone;
+
+    @JoinColumn
+    @OneToMany(targetEntity = Order.class)
+    private Set orders;
 
     public Long getId() {
         return id;
@@ -63,5 +69,9 @@ public class Client implements Serializable {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public Set getOrders() {
+        return orders;
     }
 }
