@@ -1,12 +1,12 @@
 package com.haulmont.testtask.ui.modals;
 
-import com.haulmont.testtask.data.DAO.ClientDAO;
-import com.haulmont.testtask.data.DAO.MasterDAO;
-import com.haulmont.testtask.data.DAO.OrderDAO;
+import com.haulmont.testtask.DAO.ClientDAO;
+import com.haulmont.testtask.DAO.MasterDAO;
+import com.haulmont.testtask.DAO.OrderDAO;
 import com.haulmont.testtask.data.entities.Client;
 import com.haulmont.testtask.data.entities.Master;
 import com.haulmont.testtask.data.entities.Order;
-import com.haulmont.testtask.data.exception.WrongGetException;
+import com.haulmont.testtask.exception.WrongGetException;
 import com.haulmont.testtask.ui.window.BaseWindow;
 import com.vaadin.data.validator.RegexpValidator;
 import com.vaadin.shared.ui.window.WindowMode;
@@ -54,8 +54,12 @@ public class ChangeOrderModal extends VerticalLayout implements ChangeInterface 
         addButton.addClickListener((Button.ClickListener) clickEvent -> {
 
             if (priceField.isValid() && selectClient.isValid() && selectMaster.isValid() && descrField.isValid()){
-                orderDAO.addOrder((String) selectClient.getValue(), (String) selectMaster.getValue(),
-                        new Date(createField.getValue().getTime()), new Date(finishField.getValue().getTime()),priceField.getValue(), descrField.getValue());
+                try {
+                    orderDAO.addOrder((String) selectClient.getValue(), (String) selectMaster.getValue(),
+                            new Date(createField.getValue().getTime()), new Date(finishField.getValue().getTime()),priceField.getValue(), descrField.getValue());
+                } catch (WrongGetException e) {
+                    e.printStackTrace();
+                }
 
                 window.close();
 
@@ -154,7 +158,12 @@ public class ChangeOrderModal extends VerticalLayout implements ChangeInterface 
 
         numberButton.addClickListener((Button.ClickListener) clickEvent-> {
             if (numberField.isValid()){
-                Order order = orderDAO.getOrder(numberField.getValue());
+                Order order = null;
+                try {
+                    order = orderDAO.getOrder(numberField.getValue());
+                } catch (WrongGetException e) {
+                    e.printStackTrace();
+                }
                 updatePanel.setVisible(true);
                 descrField.setValue(order.getDescription());
                 priceField.setValue(order.getPrice().toString());
@@ -163,11 +172,16 @@ public class ChangeOrderModal extends VerticalLayout implements ChangeInterface 
                 selectStatus.setValue(order.getStatus());
                 updatePanel.addComponent(updateButton);
 
+                Order finalOrder = order;
                 updateButton.addClickListener((Button.ClickListener) click -> {
                     if (descrField.isValid() && priceField.isValid() &&
                             finishField.isValid() && selectMaster.isValid() && selectStatus.isValid()){
-                        orderDAO.updateOrder(order.getId(), descrField.getValue(),
-                                priceField.getValue(),new Date(finishField.getValue().getTime()), (Long) selectMaster.getValue(), (String) selectStatus.getValue());
+                        try {
+                            orderDAO.updateOrder(finalOrder.getId(), descrField.getValue(),
+                                    priceField.getValue(),new Date(finishField.getValue().getTime()), (Long) selectMaster.getValue(), (String) selectStatus.getValue());
+                        } catch (WrongGetException e) {
+                            e.printStackTrace();
+                        }
                         Notification.show("Успешно!", "Заказ был успешно обновлен!", Notification.Type.HUMANIZED_MESSAGE);
                         window.close();
                     }

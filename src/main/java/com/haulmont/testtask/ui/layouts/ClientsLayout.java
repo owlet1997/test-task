@@ -1,6 +1,6 @@
 package com.haulmont.testtask.ui.layouts;
 
-import com.haulmont.testtask.data.DAO.ClientDAO;
+import com.haulmont.testtask.DAO.ClientDAO;
 import com.haulmont.testtask.data.entities.Client;
 import com.haulmont.testtask.ui.window.BaseWindow;
 import com.vaadin.ui.*;

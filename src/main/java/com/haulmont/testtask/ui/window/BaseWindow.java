@@ -1,8 +1,8 @@
 package com.haulmont.testtask.ui.window;
 
-import com.haulmont.testtask.data.DAO.ClientDAO;
-import com.haulmont.testtask.data.DAO.MasterDAO;
-import com.haulmont.testtask.data.DAO.OrderDAO;
+import com.haulmont.testtask.DAO.ClientDAO;
+import com.haulmont.testtask.DAO.MasterDAO;
+import com.haulmont.testtask.DAO.OrderDAO;
 import com.haulmont.testtask.data.entities.Client;
 import com.haulmont.testtask.ui.modals.ChangeInterface;
 import com.vaadin.ui.Component;

@@ -1,9 +1,9 @@
 package com.haulmont.testtask.ui.modals;
 
-import com.haulmont.testtask.data.DAO.MasterDAO;
+import com.haulmont.testtask.DAO.MasterDAO;
 import com.haulmont.testtask.data.DTO.StatisticsDTO;
 import com.haulmont.testtask.data.entities.Master;
-import com.haulmont.testtask.data.exception.WrongGetException;
+import com.haulmont.testtask.exception.WrongGetException;
 import com.haulmont.testtask.ui.window.BaseWindow;
 import com.vaadin.data.validator.RegexpValidator;
 import com.vaadin.ui.*;

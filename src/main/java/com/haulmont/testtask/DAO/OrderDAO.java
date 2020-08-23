@@ -1,15 +1,13 @@
-package com.haulmont.testtask.data.DAO;
+package com.haulmont.testtask.DAO;
 
-import com.haulmont.testtask.DataSourceConfig;
+import com.haulmont.testtask.config.DataSourceConfig;
 import com.haulmont.testtask.data.DTO.OrderDTO;
 import com.haulmont.testtask.data.entities.Order;
-import com.haulmont.testtask.data.exception.WrongGetException;
+import com.haulmont.testtask.exception.WrongGetException;
+import org.hibernate.Session;
 
-import javax.persistence.EntityManager;
 import javax.persistence.Query;
-import java.sql.*;
-
-import java.util.ArrayList;
+import java.sql.Date;
 import java.util.List;
 
 public class OrderDAO {
@@ -31,8 +29,8 @@ public class OrderDAO {
     public void addOrder(String client, String master, Date createDate,
                          Date finishDate, String price, String descr) throws WrongGetException {
 
-        EntityManager manager = DataSourceConfig.getInstance();
-        manager.getTransaction().begin();
+        Session session = DataSourceConfig.getSessionFactory().getCurrentSession();
+        session.beginTransaction();
 
         Order order = new Order();
         order.setClient(clientDAO.getClient(client));
@@ -42,32 +40,32 @@ public class OrderDAO {
         order.setPrice(Double.parseDouble(price));
         order.setDescription(descr);
 
-        manager.getTransaction().commit();
-        manager.close();
+        session.getTransaction().commit();
+        session.close();
 
     }
 
     public void delOrder(String number) throws WrongGetException {
 
-        EntityManager manager = DataSourceConfig.getInstance();
-        manager.getTransaction().begin();
+        Session session = DataSourceConfig.getSessionFactory().getCurrentSession();
+        session.beginTransaction();
 
-        Order order = manager.find(Order.class, Long.parseLong(number));
+        Order order = session.find(Order.class, Long.parseLong(number));
         if (order == null){
             throw new WrongGetException("Нет заказа с таким номером!");
         }
-        manager.remove(order);
-        manager.getTransaction().commit();
-        manager.close();
+        session.remove(order);
+        session.getTransaction().commit();
+        session.close();
 
     }
 
     public List<OrderDTO> getOrderDTOList(){
 
-        EntityManager manager = DataSourceConfig.getInstance();
-        manager.getTransaction().begin();
+        Session session = DataSourceConfig.getSessionFactory().getCurrentSession();
+        session.beginTransaction();
 
-        Query query = manager.createQuery("SELECT NEW com.haulmont.testtask.data.DTO.OrderDTO(o.id, c.last_name as client_surname, m.last_name as master_surname, o.create_date as date_create, o.finish_date as date_finish, o.price as price, o.status as status, o.descr as descr) FROM orders o inner join client c on o.client=c.id inner join master m on o.master=m.id");
+        Query query = session.createQuery("SELECT NEW com.haulmont.testtask.data.DTO.OrderDTO(o.id, c.last_name as client_surname, m.last_name as master_surname, o.create_date as date_create, o.finish_date as date_finish, o.price as price, o.status as status, o.descr as descr) FROM orders o inner join client c on o.client=c.id inner join master m on o.master=m.id");
         List<OrderDTO> orderList = query.getResultList();
 
         return orderList;
@@ -75,23 +73,22 @@ public class OrderDAO {
 
     public Order getOrder(String id) throws WrongGetException {
 
-        EntityManager manager = DataSourceConfig.getInstance();
-        manager.getTransaction().begin();
-
-        Order order = manager.find(Order.class, Long.parseLong(id));
+        Session session = DataSourceConfig.getSessionFactory().getCurrentSession();
+        session.beginTransaction();
+        Order order = session.find(Order.class, Long.parseLong(id));
         if (order == null){
             throw new WrongGetException("Нет заказа с таким номером!");
         }
-        manager.close();
+        session.close();
         return order;
     }
 
     public void updateOrder(Long id, String description, String price, Date finishDate, Long masterId, String status) throws WrongGetException {
 
-        EntityManager manager = DataSourceConfig.getInstance();
-        manager.getTransaction().begin();
+        Session session = DataSourceConfig.getSessionFactory().getCurrentSession();
+        session.beginTransaction();
 
-        Order order = manager.find(Order.class, id);
+        Order order = session.find(Order.class, id);
         if (order == null){
             throw new WrongGetException("Нет заказа с таким номером!");
         }
@@ -101,8 +98,8 @@ public class OrderDAO {
         order.setDescription(description);
         order.setStatus(status);
 
-        manager.getTransaction().commit();
-        manager.close();
+        session.getTransaction().commit();
+        session.close();
 
     }
 }

@@ -1,17 +1,11 @@
-package com.haulmont.testtask.data.DAO;
+package com.haulmont.testtask.DAO;
 
-import com.haulmont.testtask.DataSourceConfig;
+import com.haulmont.testtask.config.DataSourceConfig;
 import com.haulmont.testtask.data.entities.Client;
-import com.haulmont.testtask.data.entities.Master;
-import com.haulmont.testtask.data.exception.WrongGetException;
+import com.haulmont.testtask.exception.WrongGetException;
+import org.hibernate.Session;
 
-import javax.persistence.EntityManager;
 import javax.persistence.Query;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class ClientDAO {
@@ -30,8 +24,9 @@ public class ClientDAO {
 
     public void addClient(String fName, String lName, String fatherName, String phone) {
 
-        EntityManager manager = DataSourceConfig.getInstance();
-        manager.getTransaction().begin();
+        Session session = DataSourceConfig.getSessionFactory().getCurrentSession();
+
+        session.beginTransaction();
 
         Client client = new Client();
         client.setName(fName);
@@ -39,40 +34,40 @@ public class ClientDAO {
         client.setFatherName(fatherName);
         client.setPhone(phone);
 
-        manager.persist(client);
-        manager.getTransaction().commit();
-        manager.close();
+        session.persist(client);
+        session.getTransaction().commit();
+        session.close();
     }
 
     public void delClient(String number) throws WrongGetException {
-        EntityManager manager = DataSourceConfig.getInstance();
-        manager.getTransaction().begin();
+        Session session = DataSourceConfig.getSessionFactory().getCurrentSession();
+        session.beginTransaction();
 
-        Client client = manager.find(Client.class, Long.parseLong(number));
+        Client client = session.find(Client.class, Long.parseLong(number));
 
         if (client == null){
             throw new WrongGetException("Нельзя удалить этого клиента!");
         }
-        manager.remove(client);
-        manager.getTransaction().commit();
-        manager.close();
+        session.remove(client);
+        session.getTransaction().commit();
+        session.close();
     }
 
     public List<Client> getClientList(){
-        EntityManager manager = DataSourceConfig.getInstance();
-        manager.getTransaction().begin();
+        Session session = DataSourceConfig.getSessionFactory().getCurrentSession();
+        session.beginTransaction();
 
-        Query query = manager.createQuery("select  * from client e");
+        Query query = session.createQuery("select * from client e");
         List<Client> list = query.getResultList();
 
         return list;
     }
 
      public void updateClient(Long id, String fName, String lName, String fatherName, String phone) throws WrongGetException {
-         EntityManager manager = DataSourceConfig.getInstance();
-         manager.getTransaction().begin();
+         Session session = DataSourceConfig.getSessionFactory().getCurrentSession();
+         session.beginTransaction();
 
-         Client client = manager.find(Client.class, id);
+         Client client = session.find(Client.class, id);
          if (client == null){
              throw new WrongGetException("Нельзя удалить этого клиента!");
          }
@@ -81,16 +76,16 @@ public class ClientDAO {
          client.setFatherName(fatherName);
          client.setPhone(phone);
 
-         manager.getTransaction().commit();
-         manager.close();
+         session.getTransaction().commit();
+         session.close();
     }
 
     public Client getClient(String id) throws WrongGetException {
-        EntityManager manager = DataSourceConfig.getInstance();
-        manager.getTransaction().begin();
+        Session session = DataSourceConfig.getSessionFactory().getCurrentSession();
+        session.beginTransaction();
 
-        Client client = manager.find(Client.class, id);
-        manager.close();
+        Client client = session.find(Client.class, id);
+        session.close();
 
         return client;
     }

@@ -1,8 +1,8 @@
 package com.haulmont.testtask.ui.modals;
 
-import com.haulmont.testtask.data.DAO.ClientDAO;
+import com.haulmont.testtask.DAO.ClientDAO;
 import com.haulmont.testtask.data.entities.Client;
-import com.haulmont.testtask.data.exception.WrongGetException;
+import com.haulmont.testtask.exception.WrongGetException;
 import com.haulmont.testtask.ui.window.BaseWindow;
 import com.vaadin.data.validator.RegexpValidator;
 import com.vaadin.ui.*;
@@ -123,8 +123,12 @@ public class ChangeClientModal extends VerticalLayout implements ChangeInterface
         updateButton.addClickListener((Button.ClickListener) click -> {
             if (nameField.isValid() && surnameField.isValid() &&
                     fNameField.isValid() && phoneField.isValid()){
-                clientDAO.updateClient(client.getId(), nameField.getValue(),
-                        surnameField.getValue(),fNameField.getValue(), phoneField.getValue());
+                try {
+                    clientDAO.updateClient(client.getId(), nameField.getValue(),
+                            surnameField.getValue(),fNameField.getValue(), phoneField.getValue());
+                } catch (WrongGetException e) {
+                    e.printStackTrace();
+                }
                 window.close();
             }
         });

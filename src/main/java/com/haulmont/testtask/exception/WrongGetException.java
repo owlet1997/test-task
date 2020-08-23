@@ -1,4 +1,4 @@
-package com.haulmont.testtask.data.exception;
+package com.haulmont.testtask.exception;
 
 public class WrongGetException extends Exception{
 
